@@ -26,7 +26,7 @@ class DishesController < ApplicationController
       the_dish.save
       redirect_to("/dishes", { :notice => "Dish created successfully." })
     else
-      redirect_to("/dishes", { :alert => the_dish.errors.full_messages.to_sentence })
+      redirect_to("/dishes#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
     end
   end
 
@@ -39,7 +39,7 @@ class DishesController < ApplicationController
 
     if the_dish.valid?
       the_dish.save
-      redirect_to("/dishes/#{the_dish.id}", { :notice => "Dish updated successfully."} )
+      redirect_to("/dishes", { :notice => "Dish updated successfully."} )
     else
       redirect_to("/dishes/#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
     end
