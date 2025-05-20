@@ -1,0 +1,101 @@
+<div>
+  <div>
+    <h1>
+      Assigned meal #<%= @the_assigned_meal.id %> details
+    </h1>
+
+    <div>
+      <div>
+        <a href="/assigned_meals">
+          Go back
+        </a>
+      </div>
+
+      <div>
+        <a href="/delete_assigned_meal/<%= @the_assigned_meal.id %>">
+          Delete assigned meal
+        </a>
+      </div>
+    </div>
+
+    <dl>
+      <dt>
+        Dish
+      </dt>
+      <dd>
+        <%= @the_assigned_meal.dish_id %>
+      </dd>
+
+      <dt>
+        Assigned to
+      </dt>
+      <dd>
+        <%= @the_assigned_meal.assigned_to %>
+      </dd>
+
+      <dt>
+        User
+      </dt>
+      <dd>
+        <%= @the_assigned_meal.user_id %>
+      </dd>
+
+      <dt>
+        Created at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@the_assigned_meal.created_at) %> ago
+      </dd>
+
+      <dt>
+        Updated at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@the_assigned_meal.updated_at) %> ago
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<hr>
+
+
+<div>
+  <div>
+    <h2>
+      Edit assigned meal
+    </h2>
+
+    <form action="/modify_assigned_meal/<%= @the_assigned_meal.id %>"  method="post" >
+      <div>
+        <label for="dish_id_box">
+          Dish
+        </label>
+
+        <input type="text" id="dish_id_box" name="query_dish_id" value="<%= @the_assigned_meal.dish_id %>">
+      </div>
+
+      <div>
+        <label for="assigned_to_box">
+          Assigned to
+        </label>
+
+        <input type="date" id="assigned_to_box" name="query_assigned_to" value="<%= @the_assigned_meal.assigned_to %>">
+      </div>
+
+      <div>
+        <label for="user_id_box">
+          User
+        </label>
+
+        <input type="text" id="user_id_box" name="query_user_id" value="<%= @the_assigned_meal.user_id %>">
+      </div>
+
+      <button>
+        Update assigned meal
+      </button>
+    </form>
+  </div>
+</div>
+
+<hr>

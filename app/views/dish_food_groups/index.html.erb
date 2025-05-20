@@ -1,0 +1,118 @@
+<div>
+  <div>
+    <h1>
+      List of all dish food groups
+    </h1>
+  </div>
+</div>
+
+<hr>
+
+<div>
+  <div>
+    <h2>
+      Add a new dish food group
+    </h2>
+
+    <form action="/insert_dish_food_group" method="post">
+      <div>
+        <label for="dish_id_box">
+          Dish
+        </label>
+
+        <input type="text" id="dish_id_box" name="query_dish_id">
+      </div>
+
+      <div>
+        <label for="food_group_id_box">
+          Food group
+        </label>
+
+        <input type="text" id="food_group_id_box" name="query_food_group_id">
+      </div>
+
+      <div>
+        <label for="number_of_instances_box">
+          Number of instances
+        </label>
+
+        <input type="text" id="number_of_instances_box" name="query_number_of_instances">
+      </div>
+
+      <button>
+        Create dish food group
+      </button>
+    </form>
+  </div>
+</div>
+
+<hr>
+<div>
+  <div>
+    <table border="1">
+      <tr>
+        <th>
+          ID
+        </th>
+
+        <th>
+          Dish
+        </th>
+
+        <th>
+          Food group
+        </th>
+
+        <th>
+          Number of instances
+        </th>
+
+        <th>
+          Created at
+        </th>
+
+        <th>
+          Updated at
+        </th>
+
+        <th>
+        </th>
+      </tr>
+
+      <% @list_of_dish_food_groups.each do |a_dish_food_group| %>
+      <tr>
+        <td>
+          <%= a_dish_food_group.id %>
+        </td>
+
+        <td>
+          <%= a_dish_food_group.dish_id %>
+        </td>
+
+        <td>
+          <%= a_dish_food_group.food_group_id %>
+        </td>
+
+        <td>
+          <%= a_dish_food_group.number_of_instances %>
+        </td>
+
+        <td>
+          <%= time_ago_in_words(a_dish_food_group.created_at) %> ago
+        </td>
+        <td>
+          <%= time_ago_in_words(a_dish_food_group.updated_at) %> ago
+        </td>
+
+        <td>
+          <a href="/dish_food_groups/<%= a_dish_food_group.id %>">
+            Show details
+          </a>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<hr>

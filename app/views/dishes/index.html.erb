@@ -1,0 +1,102 @@
+<div>
+  <div>
+    <h1>
+      List of all dishes
+    </h1>
+  </div>
+</div>
+
+<hr>
+
+<div>
+  <div>
+    <h2>
+      Add a new dish
+    </h2>
+
+    <form action="/insert_dish" method="post">
+      <div>
+        <label for="name_box">
+          Name
+        </label>
+
+        <input type="text" id="name_box" name="query_name">
+      </div>
+
+      <div>
+        <label for="creator_id_box">
+          Creator
+        </label>
+
+        <input type="text" id="creator_id_box" name="query_creator_id">
+      </div>
+
+      <button>
+        Create dish
+      </button>
+    </form>
+  </div>
+</div>
+
+<hr>
+<div>
+  <div>
+    <table border="1">
+      <tr>
+        <th>
+          ID
+        </th>
+
+        <th>
+          Name
+        </th>
+
+        <th>
+          Creator
+        </th>
+
+        <th>
+          Created at
+        </th>
+
+        <th>
+          Updated at
+        </th>
+
+        <th>
+        </th>
+      </tr>
+
+      <% @list_of_dishes.each do |a_dish| %>
+      <tr>
+        <td>
+          <%= a_dish.id %>
+        </td>
+
+        <td>
+          <%= a_dish.name %>
+        </td>
+
+        <td>
+          <%= a_dish.creator_id %>
+        </td>
+
+        <td>
+          <%= time_ago_in_words(a_dish.created_at) %> ago
+        </td>
+        <td>
+          <%= time_ago_in_words(a_dish.updated_at) %> ago
+        </td>
+
+        <td>
+          <a href="/dishes/<%= a_dish.id %>">
+            Show details
+          </a>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<hr>

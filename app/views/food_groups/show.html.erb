@@ -1,0 +1,71 @@
+<div>
+  <div>
+    <h1>
+      Food group #<%= @the_food_group.id %> details
+    </h1>
+
+    <div>
+      <div>
+        <a href="/food_groups">
+          Go back
+        </a>
+      </div>
+
+      <div>
+        <a href="/delete_food_group/<%= @the_food_group.id %>">
+          Delete food group
+        </a>
+      </div>
+    </div>
+
+    <dl>
+      <dt>
+        Name
+      </dt>
+      <dd>
+        <%= @the_food_group.name %>
+      </dd>
+
+      <dt>
+        Created at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@the_food_group.created_at) %> ago
+      </dd>
+
+      <dt>
+        Updated at
+      </dt>
+      <dd>
+        <%= time_ago_in_words(@the_food_group.updated_at) %> ago
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<hr>
+
+
+<div>
+  <div>
+    <h2>
+      Edit food group
+    </h2>
+
+    <form action="/modify_food_group/<%= @the_food_group.id %>"  method="post" >
+      <div>
+        <label for="name_box">
+          Name
+        </label>
+
+        <input type="text" id="name_box" name="query_name" value="<%= @the_food_group.name %>">
+      </div>
+
+      <button>
+        Update food group
+      </button>
+    </form>
+  </div>
+</div>
+
+<hr>

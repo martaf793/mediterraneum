@@ -1,0 +1,118 @@
+<div>
+  <div>
+    <h1>
+      List of all assigned meals
+    </h1>
+  </div>
+</div>
+
+<hr>
+
+<div>
+  <div>
+    <h2>
+      Add a new assigned meal
+    </h2>
+
+    <form action="/insert_assigned_meal" method="post">
+      <div>
+        <label for="dish_id_box">
+          Dish
+        </label>
+
+        <input type="text" id="dish_id_box" name="query_dish_id">
+      </div>
+
+      <div>
+        <label for="assigned_to_box">
+          Assigned to
+        </label>
+
+        <input type="date" id="assigned_to_box" name="query_assigned_to">
+      </div>
+
+      <div>
+        <label for="user_id_box">
+          User
+        </label>
+
+        <input type="text" id="user_id_box" name="query_user_id">
+      </div>
+
+      <button>
+        Create assigned meal
+      </button>
+    </form>
+  </div>
+</div>
+
+<hr>
+<div>
+  <div>
+    <table border="1">
+      <tr>
+        <th>
+          ID
+        </th>
+
+        <th>
+          Dish
+        </th>
+
+        <th>
+          Assigned to
+        </th>
+
+        <th>
+          User
+        </th>
+
+        <th>
+          Created at
+        </th>
+
+        <th>
+          Updated at
+        </th>
+
+        <th>
+        </th>
+      </tr>
+
+      <% @list_of_assigned_meals.each do |an_assigned_meal| %>
+      <tr>
+        <td>
+          <%= an_assigned_meal.id %>
+        </td>
+
+        <td>
+          <%= an_assigned_meal.dish_id %>
+        </td>
+
+        <td>
+          <%= an_assigned_meal.assigned_to %>
+        </td>
+
+        <td>
+          <%= an_assigned_meal.user_id %>
+        </td>
+
+        <td>
+          <%= time_ago_in_words(an_assigned_meal.created_at) %> ago
+        </td>
+        <td>
+          <%= time_ago_in_words(an_assigned_meal.updated_at) %> ago
+        </td>
+
+        <td>
+          <a href="/assigned_meals/<%= an_assigned_meal.id %>">
+            Show details
+          </a>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<hr>
