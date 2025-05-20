@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
-  get("/",{ :controller => "dishes", :action => "index" })
+  # get("/",{ :controller => "dishes", :action => "index" })
+  root to: "dishes#index"
 
   # Routes for the Assigned meal resource:
 
