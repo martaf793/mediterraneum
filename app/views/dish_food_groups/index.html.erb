@@ -26,20 +26,29 @@
                 <%= a_dish.name %>
               </li>
             </ul>
-            
-
-          <option value="<%=a_dish.name%>"> <%=a_dish.name%> </option>
+          <option value="<%=a_dish.id%>"> <%=a_dish.name%> </option>
           <%end%>
         </select>
 
       </div>
 
       <div>
-        <label for="food_group_id_box">
+        <label for="food_group_id_box" class="control-label sr-only">
           Food group
         </label>
-
-        <input type="text" id="food_group_id_box" name="query_food_group_id">
+        
+        <select class="form-control" id="food_group_id_box" name="query_food_group_id">
+          <option value="">Select a food group...</option>
+            <%matching_food_groups = FoodGroup.all%>
+            <%matching_food_groups.each do |a_food_group| %>
+            <ul>
+              <li>
+                <%= a_food_group.name %>
+              </li>
+            </ul>
+          <option value="<%=a_food_group.id%>"> <%=a_food_group.name%> </option>
+          <%end%>
+        </select>
       </div>
 
       <div>
