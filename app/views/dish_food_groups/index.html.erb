@@ -3,9 +3,6 @@
     <h1>
       List of all dish food groups
     </h1>
-  </div>
-</div>
-
 <hr>
 
 <div>
@@ -16,11 +13,25 @@
 
     <form action="/insert_dish_food_group" method="post">
       <div>
-        <label for="dish_id_box">
+      <!--<div class="form-group mr-sm-1">-->
+        <label for="dish_id_box" class="control-label sr-only">
           Dish
         </label>
+        <select class="form-control" id="dish_id_box" name="query_dish_id">
+          <option value="">Choose a dish...</option>
+            <%matching_dishes = Dish.all%>
+            <%matching_dishes.each do |a_dish| %>
+            <ul>
+              <li>
+                <%= a_dish.name %>
+              </li>
+            </ul>
+            
 
-        <input type="text" id="dish_id_box" name="query_dish_id">
+          <option value="<%=a_dish.name%>"> <%=a_dish.name%> </option>
+          <%end%>
+        </select>
+
       </div>
 
       <div>
@@ -86,8 +97,11 @@
         </td>
 
         <td>
-          <%= a_dish_food_group.dish_id %>
+          <% matching_dish=Dish.where({:id=>a_dish_food_group.dish_id})%>
+          <%the_dish=matching_dish.at(0)%>
+          <%= the_dish.name %>
         </td>
+        
 
         <td>
           <%= a_dish_food_group.food_group_id %>
@@ -110,7 +124,7 @@
           </a>
         </td>
       </tr>
-      <% end %>
+      <%end%>
     </table>
   </div>
 </div>
