@@ -1,7 +1,12 @@
 <div>
   <div>
     <h1>
-      Assigned meal #<%= @the_assigned_meal.id %> details
+      <%# matching_dish=Dish.where({:id=>@the_assigned_meal.dish_id})%>
+      <%#the_dish=matching_dish.at(0)%>
+      <%#=the_dish_name=the_dish.name.capitalize %> 
+<!--      for <%#= @the_assigned_meal.assigned_to.strftime("%b %e, %Y") %>-->
+      <%=@the_assigned_meal.dish.name%>
+
     </h1>
 
     <div>
@@ -23,22 +28,24 @@
         Dish
       </dt>
       <dd>
-        <%= @the_assigned_meal.dish_id %>
+        <%#=the_dish_name=the_dish.name.capitalize %>
+        <%=@the_assigned_meal.dish.name%>
+
       </dd>
 
       <dt>
         Assigned to
       </dt>
       <dd>
-        <%= @the_assigned_meal.assigned_to %>
+        <%= @the_assigned_meal.assigned_to.strftime("%b %e, %Y") %>
       </dd>
 
-      <dt>
+<!--      <dt>
         User
       </dt>
       <dd>
-        <%= @the_assigned_meal.user_id %>
-      </dd>
+        <%#= @the_assigned_meal.user_id %>-->
+<!--      </dd>-->
 
       <dt>
         Created at
@@ -72,7 +79,10 @@
           Dish
         </label>
 
-        <input type="text" id="dish_id_box" name="query_dish_id" value="<%= @the_assigned_meal.dish_id %>">
+<!--        <input type="text" id="dish_id_box" name="query_dish_id" value="<%#=the_dish_name=the_dish.name %>">-->
+        <input type="text" id="dish_id_box" name="query_dish_id" value="<%=@the_assigned_meal.dish.name%>">
+              
+
       </div>
 
       <div>
@@ -83,13 +93,13 @@
         <input type="date" id="assigned_to_box" name="query_assigned_to" value="<%= @the_assigned_meal.assigned_to %>">
       </div>
 
-      <div>
+<!--      <div>
         <label for="user_id_box">
           User
         </label>
 
-        <input type="text" id="user_id_box" name="query_user_id" value="<%= @the_assigned_meal.user_id %>">
-      </div>
+        <input type="text" id="user_id_box" name="query_user_id" value="<%#= @the_assigned_meal.user_id %>">
+      </div>-->
 
       <button>
         Update assigned meal

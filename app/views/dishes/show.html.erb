@@ -1,7 +1,7 @@
 <div>
   <div>
     <h1>
-      Dish #<%= @the_dish.id %> details
+      Dish <%= @the_dish.name %> details
     </h1>
 
     <div>
@@ -30,7 +30,9 @@
         Creator
       </dt>
       <dd>
-        <%= @the_dish.creator_id %>
+        <%matching_user=User.where({:id=>@the_dish.creator.id})%>
+        <%the_user=matching_user.at(0)%>
+        <%= the_user.email %>
       </dd>
 
       <dt>
@@ -68,13 +70,13 @@
         <input type="text" id="name_box" name="query_name" value="<%= @the_dish.name %>">
       </div>
 
-      <div>
+<!--      <div>
         <label for="creator_id_box">
           Creator
         </label>
 
-        <input type="text" id="creator_id_box" name="query_creator_id" value="<%= @the_dish.creator_id %>">
-      </div>
+        <input type="text" id="creator_id_box" name="query_creator_id" value="<%#= @the_dish.creator_id %>">
+      </div>-->
 
       <button>
         Update dish

@@ -23,14 +23,14 @@
         Dish
       </dt>
       <dd>
-        <%= @the_dish_food_group.dish_id %>
+        <%= @the_dish_food_group.dish.name %>
       </dd>
 
       <dt>
         Food group
       </dt>
       <dd>
-        <%= @the_dish_food_group.food_group_id %>
+        <%= @the_dish_food_group.food_group.name %>
       </dd>
 
       <dt>
@@ -72,7 +72,7 @@
           Dish
         </label>
 
-        <input type="text" id="dish_id_box" name="query_dish_id" value="<%= @the_dish_food_group.dish_id %>">
+        <input type="text" id="dish_id_box" name="query_dish_id" value="<%= @the_dish_food_group.dish.name %>">
       </div>
 
       <div>
@@ -80,7 +80,7 @@
           Food group
         </label>
 
-        <input type="text" id="food_group_id_box" name="query_food_group_id" value="<%= @the_dish_food_group.food_group_id %>">
+        <input type="text" id="food_group_id_box" name="query_food_group_id" value="<%= @the_dish_food_group.food_group.name %>">
       </div>
 
       <div>

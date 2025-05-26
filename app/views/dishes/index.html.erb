@@ -43,9 +43,9 @@
   <div>
     <table border="1">
       <tr>
-        <th>
+<!--        <th>
           ID
-        </th>
+        </th>-->
 
         <th>
           Name
@@ -69,16 +69,19 @@
 
       <% @list_of_dishes.each do |a_dish| %>
       <tr>
-        <td>
-          <%= a_dish.id %>
-        </td>
+<!--        <td>-->
+          <%#= a_dish.id %>
+<!--        </td>-->
 
         <td>
           <%= a_dish.name %>
         </td>
 
         <td>
-          <%= a_dish.creator_id %>
+          <%#matching_user=User.where({:id=>a_dish.creator.id})%>
+          <%#the_user=matching_user.at(0)%>
+          <%#= the_user.email %>
+          <%=a_dish.creator.email%>
         </td>
 
         <td>

@@ -71,9 +71,9 @@
   <div>
     <table border="1">
       <tr>
-        <th>
+<!--        <th>
           ID
-        </th>
+        </th>-->
 
         <th>
           Dish
@@ -101,19 +101,20 @@
 
       <% @list_of_dish_food_groups.each do |a_dish_food_group| %>
       <tr>
-        <td>
-          <%= a_dish_food_group.id %>
-        </td>
+<!--        <td>-->
+          <%#= a_dish_food_group.id %>
+<!--        </td>-->
 
         <td>
-          <% matching_dish=Dish.where({:id=>a_dish_food_group.dish_id})%>
-          <%the_dish=matching_dish.at(0)%>
-          <%= the_dish.name %>
+          <%# matching_dish=Dish.where({:id=>a_dish_food_group.dish_id})%>
+          <%#the_dish=matching_dish.at(0)%>
+          <%#= the_dish.name %>
+          <%=a_dish_food_group.dish.name%>
         </td>
         
 
         <td>
-          <%= a_dish_food_group.food_group_id %>
+          <%= a_dish_food_group.food_group.name %>
         </td>
 
         <td>
