@@ -93,9 +93,7 @@
 <!--        </td>-->
 
         <td>
-          <% matching_dish=Dish.where({:id=>an_assigned_meal.dish_id})%>
-          <%the_dish=matching_dish.at(0)%>
-          <%= the_dish.name %>
+          <%= an_assigned_meal.dish.name %>
         </td>
 
         <td>
@@ -103,9 +101,7 @@
         </td>
 
         <td>
-          <% matching_user=User.where({:id=>an_assigned_meal.user_id})%>
-          <%the_user=matching_user.at(0)%>
-          <%= the_user.email %>
+          <%= an_assigned_meal.user.email %>
         </td>
 
         <td>

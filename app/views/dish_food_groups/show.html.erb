@@ -1,7 +1,9 @@
 <div>
   <div>
     <h1>
-      Dish food group #<%= @the_dish_food_group.id %> details
+      Number of <%=@the_dish_food_group.food_group.name%> 
+      in "<%=@the_dish_food_group.dish.name%>"
+
     </h1>
 
     <div>
@@ -26,33 +28,33 @@
         <%= @the_dish_food_group.dish.name %>
       </dd>
 
-      <dt>
+<!--      <dt>
         Food group
       </dt>
       <dd>
-        <%= @the_dish_food_group.food_group.name %>
-      </dd>
+        <%#= @the_dish_food_group.food_group.name %>-->
+<!--      </dd>-->
 
       <dt>
-        Number of instances
+        Number of <%=@the_dish_food_group.food_group.name%>
       </dt>
       <dd>
         <%= @the_dish_food_group.number_of_instances %>
       </dd>
 
-      <dt>
+<!--      <dt>
         Created at
       </dt>
       <dd>
-        <%= time_ago_in_words(@the_dish_food_group.created_at) %> ago
-      </dd>
+        <%#= time_ago_in_words(@the_dish_food_group.created_at) %> ago-->
+<!--      </dd>
 
       <dt>
         Updated at
       </dt>
       <dd>
-        <%= time_ago_in_words(@the_dish_food_group.updated_at) %> ago
-      </dd>
+        <%#= time_ago_in_words(@the_dish_food_group.updated_at) %> ago-->
+<!--      </dd>-->
     </dl>
   </div>
 </div>
@@ -85,7 +87,7 @@
 
       <div>
         <label for="number_of_instances_box">
-          Number of instances
+          Number of <%=@the_dish_food_group.food_group.name%>
         </label>
 
         <input type="text" id="number_of_instances_box" name="query_number_of_instances" value="<%= @the_dish_food_group.number_of_instances %>">

@@ -30,9 +30,7 @@
         Creator
       </dt>
       <dd>
-        <%matching_user=User.where({:id=>@the_dish.creator.id})%>
-        <%the_user=matching_user.at(0)%>
-        <%= the_user.email %>
+        <%= @the_dish.creator.email %>
       </dd>
 
       <dt>
