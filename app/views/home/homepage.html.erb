@@ -1,39 +1,43 @@
 
-<%#— compute Monday of this week —%>
+<%#— 1) compute Monday of this week —%>
 <% today         = Date.today %>
 <% start_of_week = today - ((today.wday + 6) % 7) %>
 
-<%#— group your assigned meals by date into a Hash<Date, Array<AssignedMeal>> —%>
-<% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
+<%#— 2) group all AssignedMeals by their date —%>
+<% assignments_by_date = @list_of_assigned_meals.
+     group_by { |am| am.assigned_to } %>
+
+<%#— 3) figure out the max number of assignments on any day —%>
+<% max_rows = assignments_by_date.
+     values.
+     map { |ams| ams.count }.
+     max.
+     to_i %>  <%# to_i handles the case of nil when there are no assignments %>
 
 <div>
   <h1>Weekly Meal Plan</h1>
   <table border="1">
     <tr>
       <th>Slot</th>
-      <th>Monday</th>
-      <th>Tuesday</th>
-      <th>Wednesday</th>
-      <th>Thursday</th>
-      <th>Friday</th>
-      <th>Saturday</th>
-      <th>Sunday</th>
+      <% (0..6).each do |offset| %>
+        <th><%= (start_of_week + offset).strftime("%a %b %e") %></th>
+      <% end %>
     </tr>
 
-    <%#— exactly five generic slots —%>
-    <% (0..4).each do |slot_index| %>
+    <%#— loop exactly max_rows times —%>
+    <% max_rows.times do |slot_index| %>
       <tr>
         <td>Dish number <%= slot_index + 1 %></td>
 
-        <%#— for each day of the week —%>
+        <%#— for each day, try to pull out the slot_index’th meal —%>
         <% (0..6).each do |offset| %>
-          <% day = start_of_week + offset %>
+          <% day   = start_of_week + offset %>
           <% todays = assignments_by_date.fetch(day, []) %>
-          <% assigned_meal = todays.at(slot_index) %>
+          <% assigned = todays.at(slot_index) %>
 
           <td>
-            <% if assigned_meal %>
-              <%= assigned_meal.dish.name %>
+            <% if assigned %>
+              <%= assigned.dish.name %>
             <% end %>
           </td>
         <% end %>
@@ -42,4 +46,71 @@
   </table>
 </div>
 
-<hr>
+<% summary_by_day_and_group = {} %>
+<% (0..6).each do |offset| %>
+  <% day = start_of_week + offset %>
+  <% todays = assignments_by_date.fetch(day, []) %>
+
+  <% @food_groups.each do |fg| %>
+    <% summary_by_day_and_group[[day, fg.name]] = 0 %>
+  <% end %>
+
+  <% todays.each do |assignment| %>
+    <% if assignment.dish.present? %>
+      <% dish_food_groups = assignment.dish.dish_food_groups %>
+      <% if dish_food_groups.present? %>
+        <% dish_food_groups.each do |dfg| %>
+          <% fg_name = dfg.food_group.name %>
+          <% summary_by_day_and_group[[day, fg_name]] += dfg.number_of_instances.to_i %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+
+
+<% weekly_totals = Hash.new(0) %>
+<% summary_by_day_and_group.each do |(day, fg_name), count| %>
+  <% weekly_totals[fg_name] += count %>
+<% end %>
+
+<% recommended_per_week = {
+  "Vegetables" => "14/week",
+  "Legumes" => "2–4/week",
+  "Fish" => "2–4/week",
+  "Eggs" => "3–5/week",
+  "White meat" => "2–3/week",
+  "Red meat" => "1/week",
+  "Whole grains" => "7/week"
+} %>
+<h2>Summary of Food Groups per Day</h2>
+<table border="1">
+  <tr>
+    <th>Food Group</th>
+    <% (0..6).each do |offset| %>
+      <% day = start_of_week + offset %>
+      <th><%= day.strftime("%a %b %e") %></th>
+    <% end %>
+    <th>Total (week)</th>
+    <th>Recommended</th>
+  </tr>
+
+  <% @food_groups.each do |fg| %>
+    <tr>
+      <td><%= fg.name %></td>
+      <% (0..6).each do |offset| %>
+        <% day = start_of_week + offset %>
+        <td><%= summary_by_day_and_group[[day, fg.name]] %></td>
+      <% end %>
+      <td><%= weekly_totals[fg.name] %></td>
+
+      <% recommended = recommended_per_week[fg.name] %>
+      <td>
+        <% if recommended.present? %>
+          <%= recommended %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>

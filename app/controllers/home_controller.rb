@@ -5,7 +5,7 @@ class HomeController < ApplicationController
 
     matching_assigned_meals = AssignedMeal.all
     @list_of_assigned_meals = matching_assigned_meals.order({ :assigned_to => :asc })
-    
+    @food_groups = FoodGroup.all
     render({ :template => "home/homepage" })
   end
 end
