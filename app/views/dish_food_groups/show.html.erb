@@ -65,25 +65,19 @@
 <div>
   <div>
     <h2>
-      Edit dish food group
+      Modify the number of <%=@the_dish_food_group.food_group.name%> 
+      in "<%=@the_dish_food_group.dish.name%>"
     </h2>
 
     <form action="/modify_dish_food_group/<%= @the_dish_food_group.id %>"  method="post" >
-      <div>
-        <label for="dish_id_box">
-          Dish
-        </label>
-
-        <input type="text" id="dish_id_box" name="query_dish_name" value="<%= @the_dish_food_group.dish.name %>">
-      </div>
-
+<!--
       <div>
         <label for="food_group_id_box">
           Food group
-        </label>
+        </label>-->
 
-        <input type="text" id="food_group_id_box" name="query_food_group_id" value="<%= @the_dish_food_group.food_group.name %>">
-      </div>
+<!--        <input type="text" id="food_group_id_box" name="query_food_group_id" value="<%#= @the_dish_food_group.food_group.name %>">
+      </div>-->
 
       <div>
         <label for="number_of_instances_box">

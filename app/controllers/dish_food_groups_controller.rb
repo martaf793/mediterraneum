@@ -33,17 +33,17 @@ class DishFoodGroupsController < ApplicationController
 
   def update
     the_id = params.fetch("path_id")
-    the_dish_food_group = DishFoodGroup.where({ :id => the_id }).at(0)
+    @the_dish_food_group = DishFoodGroup.where({ :id => the_id }).at(0)
 
-    the_dish_food_group.dish_id = params.fetch("query_dish_id")
-    the_dish_food_group.food_group_id = params.fetch("query_food_group_id")
-    the_dish_food_group.number_of_instances = params.fetch("query_number_of_instances")
+    # @the_dish_food_group.dish_id = params.fetch("query_dish_id")
+    # @the_dish_food_group.food_group_id = params.fetch("query_food_group_id")
+    @the_dish_food_group.number_of_instances = params.fetch("query_number_of_instances")
 
-    if the_dish_food_group.valid?
-      the_dish_food_group.save
-      redirect_to("/dish_food_groups/#{the_dish_food_group.id}", { :notice => "Dish food group updated successfully."} )
+    if @the_dish_food_group.valid?
+      @the_dish_food_group.save
+      redirect_to("/dish_food_groups/#{@the_dish_food_group.id}", { :notice => "Dish food group updated successfully."} )
     else
-      redirect_to("/dish_food_groups/#{the_dish_food_group.id}", { :alert => the_dish_food_group.errors.full_messages.to_sentence })
+      redirect_to("/dish_food_groups/#{@the_dish_food_group.id}", { :alert => @the_dish_food_group.errors.full_messages.to_sentence })
     end
   end
 
