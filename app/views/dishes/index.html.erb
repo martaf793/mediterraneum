@@ -37,6 +37,18 @@
 </div>
 
 <hr>
+<%= search_form_for @q do |f| %>
+  <h2>Narrow results:</h2>
+  <div>
+    <%= f.label :name_cont, "Dish containing" %>
+    <%= f.text_field :name_cont, :placeholder => " " %>
+  </div>
+
+  <%= f.submit :class => "btn btn-primary btn-block" %>
+  
+  <a href="/dishes">Clear filters</a>
+<% end %>
+<hr>
 
 <div>
   <div>

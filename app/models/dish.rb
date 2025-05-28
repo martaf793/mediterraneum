@@ -9,6 +9,9 @@
 #  creator_id :integer
 #
 class Dish < ApplicationRecord
+  def self.ransackable_attributes(auth_object=nil)
+    ["name", "food group"]
+  end 
 #direct associations
   has_many  :dish_food_groups, class_name: "DishFoodGroup", foreign_key: "dish_id", dependent: :destroy
   has_many  :assigned_meals, class_name: "AssignedMeal", foreign_key: "dish_id", dependent: :destroy
