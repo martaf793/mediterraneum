@@ -13,4 +13,8 @@ class DishFoodGroup < ApplicationRecord
 #direct associations
   belongs_to :dish, required: true, class_name: "Dish", foreign_key: "dish_id"
   belongs_to :food_group, required: true, class_name: "FoodGroup", foreign_key: "food_group_id"
+  
+  def self.ransackable_attributes(auth_object=nil)
+    ["food_group_id", "id"]
+  end 
 end

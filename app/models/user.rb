@@ -10,4 +10,6 @@ class User < ApplicationRecord
   #direct associations
   has_many  :dishes, class_name: "Dish", foreign_key: "creator_id", dependent: :destroy
   has_many  :assigned_meals, class_name: "AssignedMeal", foreign_key: "user_id", dependent: :destroy
+  has_many :eaten_dishes, through: :assigned_meals, source: :dish
+
 end

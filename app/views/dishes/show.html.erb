@@ -68,13 +68,9 @@
         <input type="text" id="name_box" name="query_name" value="<%= @the_dish.name %>">
       </div>
 
-<!--      <div>
-        <label for="creator_id_box">
-          Creator
-        </label>
-
-        <input type="text" id="creator_id_box" name="query_creator_id" value="<%#= @the_dish.creator_id %>">
-      </div>-->
+      <div>
+        <input type="hidden" id="creator_id_box" name="query_creator_id" value="<%= @the_dish.creator_id %>">
+      </div>
 
       <button>
         Update dish

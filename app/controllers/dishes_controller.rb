@@ -1,7 +1,7 @@
 class DishesController < ApplicationController
   def index
     @q=Dish.ransack(params[:q])
-    @matching_dishes = @q.result
+    @matching_dishes = @q.result(:distinct => true).includes(:dish_food_groups)
     @list_of_dishes = @matching_dishes.order({ :created_at => :desc })
 
     matching_assigned_meals = AssignedMeal.all
