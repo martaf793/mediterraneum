@@ -25,6 +25,16 @@
       <dd>
         <%= @the_dish.name %>
       </dd>
+    <% if @the_dish.dish_food_groups.any? %>
+      <dt>Food Groups</dt>
+      <dd>
+        <ul>
+          <% @the_dish.dish_food_groups.includes(:food_group).each do |dfg| %>
+            <li><%= dfg.food_group.name %>: <%= dfg.number_of_instances %></li>
+          <% end %>
+        </ul>
+      </dd>
+    <% end %>
 
       <dt>
         Creator

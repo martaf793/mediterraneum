@@ -64,9 +64,9 @@
     <table border="1">
       <tr>
         <th>Name</th>
-        <th>Creator</th>
+<!--        <th>Creator</th>
         <th>Created at</th>
-        <th>Updated at</th>
+        <th>Updated at</th>-->
         <% food_group_counts = @list_of_dishes.map { |dish| dish.dish_food_groups.count } %>
         <% if food_group_counts.any? %>
           <% max_food_groups = food_group_counts.max %>
@@ -83,9 +83,9 @@
       <% @list_of_dishes.each do |a_dish| %>
         <tr>
           <td><%= a_dish.name %></td>
-          <td><%= a_dish.creator.email %></td>
-          <td><%= time_ago_in_words(a_dish.created_at) %> ago</td>
-          <td><%= time_ago_in_words(a_dish.updated_at) %> ago</td>
+<!--          <td><%#= a_dish.creator.email %></td>
+          <td><%#= time_ago_in_words(a_dish.created_at) %> ago</td>
+          <td><%#= time_ago_in_words(a_dish.updated_at) %> ago</td>-->
           
         <% food_groups = a_dish.dish_food_groups.includes(:food_group) %>
         <% max_food_groups.times do |i| %>
