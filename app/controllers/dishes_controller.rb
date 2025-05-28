@@ -31,6 +31,72 @@ class DishesController < ApplicationController
     else
       redirect_to("/dishes#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
     end
+
+    def process_inputs
+      @the_description = params.fetch("query_name", "")
+
+      chat = OpenAI::Chat.new
+      chat.model = "gpt-4.1-nano"
+      chat.system("You are an expert nutritionist. Your job is to assess how many instances of these food groups categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal.  You should also add notes on how you arrived at these figures, and any other notes you have. The user will provide a description of the meal.")
+      chat.schema = '{
+        "query_name": "User-entered string describing the meal",
+        "food_group_counts": {
+          "vegetables": {
+            "count": 0,
+            "examples": []
+          },
+          "legumes": {
+            "count": 0,
+            "examples": []
+          },
+          "fish": {
+            "count": 0,
+            "examples": []
+          },
+          "eggs": {
+            "count": 0,
+            "examples": []
+          },
+          "white_meat": {
+            "count": 0,
+            "examples": []
+          },
+          "red_meat": {
+            "count": 0,
+            "examples": []
+          },
+          "whole_grains": {
+            "count": 0,
+            "examples": []
+          }
+        },
+
+        "notes": "Detailed explanation of how the counts were assessed, ambiguities, or any clarifications (e.g., ingredients that might be borderline).",
+
+        "other_considerations": "General nutrition advice, suggestions for improvement, or additional observations relevant to the meal."
+      }'
+      if @the_description.blank?
+          @notes = "You must provide at least one of image or description."
+      else
+        if @the_description.present?
+          chat.user(@the_description)
+        end
+
+        result = chat.assistant!
+
+        @vegetables = result.fetch("vegetables").at(0).fetch("count")
+        @legumes = result.fetch("legumes")
+        @fish = result.fetch("fish")
+        @eggs = result.fetch("eggs")
+        @white_meat = result.fetch("white_meat")
+        @red_meat = result.fetch("red_meat")
+        @whole_grains = result.fetch("whole_grains")
+        @notes = result.fetch("notes")
+    
+      end
+
+      render({ :template => "dishes/index" })
+    end 
   end
 
   def update
@@ -56,70 +122,5 @@ class DishesController < ApplicationController
 
     redirect_to("/dishes", { :notice => "Dish deleted successfully."} )
   end
-  def process_inputs
-    @the_description = params.fetch("meal_description", "")
-
-    chat = OpenAI::Chat.new
-    chat.model = "gpt-4.1-nano"
-    chat.system("You are an expert nutritionist. Your job is to assess how many instances of these food groups categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal.  You should also add notes on how you arrived at these figures, and any other notes you have. The user will provide a description of the meal.")
-    chat.schema = '{
-      "meal_description": "User-entered string describing the meal",
-      "food_group_counts": {
-        "vegetables": {
-          "count": 0,
-          "examples": []
-        },
-        "legumes": {
-          "count": 0,
-          "examples": []
-        },
-        "fish": {
-          "count": 0,
-          "examples": []
-        },
-        "eggs": {
-          "count": 0,
-          "examples": []
-        },
-        "white_meat": {
-          "count": 0,
-          "examples": []
-        },
-        "red_meat": {
-          "count": 0,
-          "examples": []
-        },
-        "whole_grains": {
-          "count": 0,
-          "examples": []
-        }
-      },
-
-      "notes": "Detailed explanation of how the counts were assessed, ambiguities, or any clarifications (e.g., ingredients that might be borderline).",
-
-      "other_considerations": "General nutrition advice, suggestions for improvement, or additional observations relevant to the meal."
-    }'
-    if @the_description.blank?
-        @notes = "You must provide at least one of image or description."
-    else
-      if @the_description.present?
-        chat.user(@the_description)
-      end
-
-      result = chat.assistant!
-
-      @vegetables = result.fetch("vegetables")
-      @legumes = result.fetch("legumes")
-      @fish = result.fetch("fish")
-      @eggs = result.fetch("eggs")
-      @white_meat = result.fetch("white_meat")
-      @red_meat = result.fetch("red_meat")
-      @whole_grains = result.fetch("whole_grains")
-      @notes = result.fetch("notes")
-  
-    end
-
-    render({ :template => "dishes/index" })
-  end 
   
 end
