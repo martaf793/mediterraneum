@@ -19,7 +19,6 @@
         <label for="name_box">
           Name
         </label>
-
         <input type="text" id="name_box" name="query_name">
       </div>
 
@@ -27,7 +26,6 @@
         <label for="creator_id_box">
           Creator
         </label>
-
         <input type="hidden" name="query_creator_id" value="<%= current_user.id %>">
       </div>
 
@@ -39,64 +37,75 @@
 </div>
 
 <hr>
+
+<%#— compute Monday of this week —%>
+<% today         = Date.today %>
+<% start_of_week = today - ((today.wday + 6) % 7) %>
+
+<%#— group your assigned meals by date into a Hash<Date, Array<AssignedMeal>> —%>
+<% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
+
+<div>
+  <h1>Weekly Meal Plan</h1>
+  <table border="1">
+    <tr>
+      <th>Slot</th>
+      <th>Monday</th>
+      <th>Tuesday</th>
+      <th>Wednesday</th>
+      <th>Thursday</th>
+      <th>Friday</th>
+      <th>Saturday</th>
+      <th>Sunday</th>
+    </tr>
+
+    <%#— exactly five generic slots —%>
+    <% (0..4).each do |slot_index| %>
+      <tr>
+        <td>Dish number <%= slot_index + 1 %></td>
+
+        <%#— for each day of the week —%>
+        <% (0..6).each do |offset| %>
+          <% day = start_of_week + offset %>
+          <% todays = assignments_by_date.fetch(day, []) %>
+          <% assigned_meal = todays.at(slot_index) %>
+
+          <td>
+            <% if assigned_meal %>
+              <%= assigned_meal.dish.name %>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<hr>
+
 <div>
   <div>
     <table border="1">
       <tr>
-<!--        <th>
-          ID
-        </th>-->
-
-        <th>
-          Name
-        </th>
-
-        <th>
-          Creator
-        </th>
-
-        <th>
-          Created at
-        </th>
-
-        <th>
-          Updated at
-        </th>
-
-        <th>
-        </th>
+        <th>Name</th>
+        <th>Creator</th>
+        <th>Created at</th>
+        <th>Updated at</th>
+        <th></th>
       </tr>
 
       <% @list_of_dishes.each do |a_dish| %>
-      <tr>
-<!--        <td>-->
-          <%#= a_dish.id %>
-<!--        </td>-->
-
-        <td>
-          <%= a_dish.name %>
-        </td>
-
-        <td>
-          <%#matching_user=User.where({:id=>a_dish.creator.id})%>
-          <%#the_user=matching_user.at(0)%>
-          <%#= the_user.email %>
-          <%=a_dish.creator.email%>
-        </td>
-
-        <td>
-          <%= time_ago_in_words(a_dish.created_at) %> ago
-        </td>
-        <td>
-          <%= time_ago_in_words(a_dish.updated_at) %> ago
-        </td>
-
-        <td>
-          <a href="/dishes/<%= a_dish.id %>">
-            Show details
-          </a>
-        </td>
-      </tr>
+        <tr>
+          <td><%= a_dish.name %></td>
+          <td><%= a_dish.creator.email %></td>
+          <td><%= time_ago_in_words(a_dish.created_at) %> ago</td>
+          <td><%= time_ago_in_words(a_dish.updated_at) %> ago</td>
+          <td>
+            <a href="/dishes/<%= a_dish.id %>">
+              Show details
+            </a>
+          </td>
+        </tr>
       <% end %>
     </table>
   </div>

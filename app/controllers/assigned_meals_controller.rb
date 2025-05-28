@@ -2,7 +2,7 @@ class AssignedMealsController < ApplicationController
   def index
     matching_assigned_meals = AssignedMeal.all
 
-    @list_of_assigned_meals = matching_assigned_meals.order({ :created_at => :desc })
+    @list_of_assigned_meals = matching_assigned_meals.order({ :assigned_to => :asc })
 
     render({ :template => "assigned_meals/index" })
   end
