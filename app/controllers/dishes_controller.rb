@@ -35,8 +35,17 @@ class DishesController < ApplicationController
   end
 
   def process_inputs
-    
-    @the_description = params.fetch("query_name", "")
+    # 1) copy index’s setup so the view has everything it expects:
+    @q                  = Dish.ransack(params[:q])
+    @matching_dishes    = @q.result({ :distinct => true })
+                             .includes(:dish_food_groups)
+    @list_of_dishes     = @matching_dishes
+                             .order({ :created_at => :desc })
+    matching_meals      = AssignedMeal.all
+    @list_of_assigned_meals = matching_meals
+                             .order({ :assigned_to => :asc })
+                             
+    @the_description = params.fetch("ai_query_name", "")
 
     if @the_description.blank?
       @notes = "You must provide a description."
@@ -97,7 +106,7 @@ class DishesController < ApplicationController
       @notes        = structured.fetch("notes")
     end
 
-    redirect_to("/dishes")
+    render({ :template => "dishes/index" })
   end
   
 

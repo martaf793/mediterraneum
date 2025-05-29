@@ -42,13 +42,10 @@
 
     <form action="/analyze_dish" method="post">
       <div>
-        <label for="name_box">
+        <label for="ai_query_name">
           Meal description
         </label>
-        <input type="text" id="name_box" name="query_name"  placeholder="e.g. salmon with quinoa and broccoli">
-      </div>
-
-      <div>
+        <input type="text" id="ai_query_name" name="ai_query_name"  placeholder="e.g. salmon with quinoa and broccoli">
         <input type="hidden" name="query_creator_id" value="<%= current_user.id %>">
       </div>
 
