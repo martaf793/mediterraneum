@@ -1,12 +1,12 @@
 class DishesController < ApplicationController
 
   def index
-    @q = Dish.joins(:food_groups).where(creator_id: current_user.id).ransack(params[:q])
-    @list_of_dishes = @q.result(distinct: true).includes(:dish_food_groups, :food_groups).order(updated_at: :desc)
-  
+    @q = Dish.where(creator_id: current_user.id).ransack(params[:q])
+    @list_of_dishes = @q.result(distinct: true).joins(:food_groups).includes(:dish_food_groups, :food_groups).order(updated_at: :desc)
+
     matching_assigned_meals = AssignedMeal.all
     @list_of_assigned_meals = matching_assigned_meals.where(creator_id: current_user.id).order(assigned_to: :asc)
-    
+
     render({ :template => "dishes/index" })
   end
 
