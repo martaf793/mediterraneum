@@ -3,7 +3,7 @@ class DishesController < ApplicationController
   def index
     @q=Dish.ransack(params[:q])
     @matching_dishes = @q.result(:distinct => true).includes(:dish_food_groups)
-    @list_of_dishes = @matching_dishes.order({ :created_at => :desc })
+    @list_of_dishes = @matching_dishes.order({ :updated_at => :desc })
 
     matching_assigned_meals = AssignedMeal.all
     @list_of_assigned_meals = matching_assigned_meals.order({ :assigned_to => :asc })
@@ -20,7 +20,7 @@ class DishesController < ApplicationController
 
     render({ :template => "dishes/show" })
   end
-
+  
   def create
     the_dish            = Dish.new
     the_dish.name       = params.fetch("ai_query_name")
@@ -28,8 +28,45 @@ class DishesController < ApplicationController
 
     if the_dish.valid?
       the_dish.save
-      require "http"
-      require "json"
+      analyze_and_save_counts(the_dish)
+      flash[:notice] = "Dish created and analyzed successfully."
+    else
+      flash[:alert] = the_dish.errors.full_messages.to_sentence
+    end
+
+    redirect_to("/dishes")
+  end
+
+  def update
+    the_dish            = Dish.where({ :id => params.fetch("path_id") }).at(0)
+    the_dish.name       = params.fetch("query_name")
+    the_dish.creator_id = params.fetch("query_creator_id")
+
+    if the_dish.valid?
+      the_dish.save
+
+      # 1) Remove old join-table rows
+      DishFoodGroup.where({ :dish_id => the_dish.id }).each do |dfg|
+        dfg.destroy
+      end
+
+      # 2) Re-analyze with AI and re-insert
+      analyze_and_save_counts(the_dish)
+
+      redirect_to("/dishes", { :notice => "Dish updated and re-analyzed!" })
+    else
+      redirect_to(
+        "/dishes/#{ the_dish.id }",
+        { :alert => the_dish.errors.full_messages.to_sentence }
+      )
+    end
+  end
+
+  private
+  def analyze_and_save_counts(dish)
+    require "http"
+    require "json"
+  
       schema = {
         "type" => "object",
         "properties" => {
@@ -61,7 +98,7 @@ class DishesController < ApplicationController
           },
           {
             "role"    => "user",
-            "content" => the_dish.name
+            "content" => dish.name
           }
         ]
       }
@@ -82,9 +119,7 @@ class DishesController < ApplicationController
       structured_output = JSON.parse(content)
       fg_counts         = structured_output.fetch("food_group_counts")
 
-      
-
-      # 3) persist each count into the join table
+      # persist each count into the join table
       fg_counts.each do |fg_key, fg_data|
         # map "white_meat" → "white meat"  etc, to match your FoodGroup.name
         group_name      = fg_key.tr("_", " ")
@@ -93,43 +128,13 @@ class DishesController < ApplicationController
         next unless the_group
 
         dfg = DishFoodGroup.new
-        dfg.dish_id             = the_dish.id
+        dfg.dish_id             = dish.id
         dfg.food_group_id       = the_group.id
         dfg.number_of_instances = fg_data.fetch("count")
         dfg.save
       end
-
-      flash[:notice] = "Dish created and analyzed!"
-    else
-      flash[:alert] = the_dish.errors.full_messages.to_sentence
-    end
-
-    @q               = Dish.ransack(params[:q])
-    @matching_dishes = @q.result({ :distinct => true })
-                        .includes(:dish_food_groups)
-    @list_of_dishes  = @matching_dishes.order({ :created_at => :desc })
-    @list_of_assigned_meals =
-      AssignedMeal.all.order({ :assigned_to => :asc })
-
-    render({ :template => "dishes/index" })
   end
   
-
-  def update
-    the_id = params.fetch("path_id")
-    the_dish = Dish.where({ :id => the_id }).at(0)
-
-    the_dish.name = params.fetch("query_name")
-    the_dish.creator_id = params.fetch("query_creator_id")
-
-    if the_dish.valid?
-      the_dish.save
-      redirect_to("/dishes", { :notice => "Dish updated successfully."} )
-    else
-      redirect_to("/dishes/#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
-    end
-  end
-
   def destroy
     the_id = params.fetch("path_id")
     the_dish = Dish.where({ :id => the_id }).at(0)
