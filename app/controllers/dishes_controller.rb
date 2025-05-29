@@ -30,6 +30,25 @@ class DishesController < ApplicationController
       the_dish.save
       require "http"
       require "json"
+      schema = {
+        "type" => "object",
+        "properties" => {
+          "food_group_counts" => {
+            "type" => "object",
+            "properties" => {
+              "vegetables"   => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "legumes"      => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "fish"         => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "eggs"         => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "white_meat"   => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "red_meat"     => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } },
+              "whole_grains" => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } }
+            }
+          },
+          "notes" => { "type" => "string" }
+        },
+        "required" => ["food_group_counts", "notes"]
+      }
 
       body_hash = {
         "model"    => "gpt-3.5-turbo",
@@ -38,13 +57,7 @@ class DishesController < ApplicationController
             "role"    => "system",
             "content" =>
               "You are an expert nutritionist. Your job is to assess how many instances of these food group categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal. The user will provide a description of the meal. Respond in valid JSON according to the provided schema." \
-              "return JSON matching this schema:\n" \
-              "{\"food_group_counts\":{" \
-                "\"vegetables\":{\"count\":0},\"legumes\":{\"count\":0}," \
-                "\"fish\":{\"count\":0},\"eggs\":{\"count\":0}," \
-                "\"white_meat\":{\"count\":0},\"red_meat\":{\"count\":0}," \
-                "\"whole_grains\":{\"count\":0}" \
-              "},\"notes\":\"string\"}"
+              "#{JSON.generate(schema)}"
           },
           {
             "role"    => "user",
@@ -53,21 +66,23 @@ class DishesController < ApplicationController
         ]
       }
 
-      raw    = HTTP.auth("Bearer #{ENV.fetch("OPENAI_TOKEN")}")
-                  .post(
-                    "https://api.openai.com/v1/chat/completions",
-                    :json => body_hash
-                  )
-                  .to_s
-      parsed = JSON.parse(raw)
+      raw_response    = HTTP.auth("Bearer #{ENV.fetch("OPENAI_TOKEN")}")
+                          .post(
+                            "https://api.openai.com/v1/chat/completions",
+                            :json => body_hash
+                          )
+                          .to_s
+      parsed_response = JSON.parse(raw_response)
 
-      content    = parsed
-                    .fetch("choices")
-                    .at(0)
-                    .fetch("message")
-                    .fetch("content")
-      structured = JSON.parse(content)
-      fg_counts  = structured.fetch("food_group_counts")
+      content           = parsed_response
+                            .fetch("choices")
+                            .at(0)
+                            .fetch("message")
+                            .fetch("content")
+      structured_output = JSON.parse(content)
+      fg_counts         = structured_output.fetch("food_group_counts")
+
+      
 
       # 3) persist each count into the join table
       fg_counts.each do |fg_key, fg_data|
