@@ -61,6 +61,15 @@ class DishesController < ApplicationController
       )
     end
   end
+  
+  def destroy
+    the_id = params.fetch("path_id")
+    the_dish = Dish.where({ :id => the_id }).at(0)
+
+    the_dish.destroy
+
+    redirect_to("/dishes", { :notice => "Dish deleted successfully."} )
+  end
 
   private
   def analyze_and_save_counts(dish)
@@ -133,15 +142,6 @@ class DishesController < ApplicationController
         dfg.number_of_instances = fg_data.fetch("count")
         dfg.save
       end
-  end
-  
-  def destroy
-    the_id = params.fetch("path_id")
-    the_dish = Dish.where({ :id => the_id }).at(0)
-
-    the_dish.destroy
-
-    redirect_to("/dishes", { :notice => "Dish deleted successfully."} )
   end
   
 end

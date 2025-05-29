@@ -19,25 +19,25 @@
         <th><%= (start_of_week + offset).strftime("%a %b %e") %></th>
       <% end %>
     </tr>
-    <% max_rows.times do |slot_index| %>
-      <tr>
-        <td>Dish <%= slot_index + 1 %></td>
-        <% (0..6).each do |offset| %>
-          <% day = start_of_week + offset %>
-          <% todays = assignments_by_date.fetch(day, []) %>
-          <% assignment = todays[slot_index] %>
-          <td>
-            <% if assignment && assignment.dish.present? %>
-              <a href="/assigned_meals/<%= assignment.id %>">
-                <%= assignment.dish.name %>
-              </a>
-            <% else %>
-              <a href="/assigned_meals">Assign a dish for today</a>
-            <% end %>
-          </td>
-        <% end %>
-      </tr>
-    <% end %>
+  <% max_rows.times do |slot_index| %>
+    <tr>
+      <td>Dish <%= slot_index + 1 %></td>
+      <% (0..6).each do |offset| %>
+        <% day = start_of_week + offset %>
+        <% todays = assignments_by_date.fetch(day, []).sort_by { |a| a.created_at } %>
+        <% assignment = todays[slot_index] %>
+        <td>
+          <% if assignment && assignment.dish.present? %>
+            <a href="/assigned_meals/<%= assignment.id %>">
+              <%= assignment.dish.name %>
+            </a>
+          <% else %>
+            <a href="/assigned_meals">Assign a dish for today</a>
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
+    <%end%>
 
     </tr>
   </table>

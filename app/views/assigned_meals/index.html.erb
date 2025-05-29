@@ -21,15 +21,12 @@
         </label>
         <select class="form-control" id="dish_id_box" name="query_dish_id">
           <option value="">Choose a dish...</option>
-            <%matching_dishes = Dish.all%>
-            <%matching_dishes.each do |a_dish| %>
-            <ul>
-              <li>
-                <%= a_dish.name %>
-              </li>
-            </ul>
-          <option value="<%=a_dish.id%>"> <%=a_dish.name%> </option>
-          <%end%>
+          <%# matching_dishes = Dish.order(updated_at: :desc) %>
+<!---->
+           <% matching_dishes = Dish.order(:name) %>
+          <% matching_dishes.each do |a_dish| %>
+            <option value="<%= a_dish.id %>"><%= a_dish.name %></option>
+          <% end %>
         </select>
       </div>
 
@@ -89,7 +86,10 @@
       <% @list_of_assigned_meals.each do |an_assigned_meal| %>
       <% if an_assigned_meal.dish.present? %> <!-- only show rows with a dish -->
         <tr>
-          <td><%= an_assigned_meal.dish.name %></td>
+          <td>
+            <a href="/dishes/<%= an_assigned_meal.dish.id %>">
+            <%= an_assigned_meal.dish.name %></a>
+            </td>
           <td><%= an_assigned_meal.assigned_to.strftime("%a %b %e, %Y") %></td>
           <td><%= an_assigned_meal.user.email %></td>
           <td><%= time_ago_in_words(an_assigned_meal.created_at) %> ago</td>
