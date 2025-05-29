@@ -95,7 +95,11 @@
 
   <% @food_groups.each do |fg| %>
     <tr>
-      <td><%= fg.name %></td>
+      <td>
+        <a href="/food_groups/<%= fg.id %>">
+              <%= fg.name %>
+        </a>
+      </td>
       <% (0..6).each do |offset| %>
         <% day = start_of_week + offset %>
         <td><%= summary_by_day_and_group[[day, fg.name]] %></td>

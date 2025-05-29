@@ -11,11 +11,11 @@
         </a>
       </div>
 
-      <div>
-        <a href="/delete_food_group/<%= @the_food_group.id %>">
+<!--      <div>
+        <a href="/delete_food_group/<%#= @the_food_group.id %>">
           Delete food group
         </a>
-      </div>
+      </div>-->
     </div>
 
     <dl>
@@ -25,6 +25,28 @@
       <dd>
         <%= @the_food_group.name %>
       </dd>
+    <hr>
+
+    <div>
+      <h2>Dishes with this food group</h2>
+      <% if @dish_food_groups.any? %>
+        <ul>
+          <% @dish_food_groups.each do |dfg| %>
+            <% if dfg.dish.present? %>
+              <li>
+                <a href="/dishes/<%= dfg.dish.id %>">
+                  <%= dfg.dish.name %>
+                </a>
+                : <%= dfg.number_of_instances %>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      <% else %>
+        <p>No dishes currently have <%= @the_food_group.name.capitalize %></p>
+      <% end %>
+    </div>
+
 
       <!--<dt>
         Created at
@@ -46,19 +68,19 @@
 <hr>
 
 
-<div>
+<!--<div>
   <div>
     <h2>
       Edit food group
     </h2>
 
-    <form action="/modify_food_group/<%= @the_food_group.id %>"  method="post" >
+    <form action="/modify_food_group/<%#= @the_food_group.id %>"  method="post" >
       <div>
         <label for="name_box">
           Name
         </label>
 
-        <input type="text" id="name_box" name="query_name" value="<%= @the_food_group.name %>">
+        <input type="text" id="name_box" name="query_name" value="<%#= @the_food_group.name %>">
       </div>
 
       <button>
@@ -69,3 +91,4 @@
 </div>
 
 <hr>
+-->

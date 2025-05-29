@@ -13,7 +13,12 @@ class FoodGroupsController < ApplicationController
     matching_food_groups = FoodGroup.where({ :id => the_id })
 
     @the_food_group = matching_food_groups.at(0)
-
+    @dish_food_groups = DishFoodGroup
+    .includes(:dish)
+    .where({ :food_group_id => the_id })
+    .where("number_of_instances > 0")
+    .order("dishes.name ASC")
+    
     render({ :template => "food_groups/show" })
   end
 
