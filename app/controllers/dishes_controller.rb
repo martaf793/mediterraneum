@@ -3,28 +3,29 @@ class DishesController < ApplicationController
   def index
     @q=Dish.ransack(params[:q])
     @matching_dishes = @q.result(:distinct => true).includes(:dish_food_groups)
-    @list_of_dishes = @matching_dishes.order({ :updated_at => :desc })
+    @list_of_dishes = @matching_dishes.where(creator_id: current_user.id).order({ :updated_at => :desc })
 
     matching_assigned_meals = AssignedMeal.all
-    @list_of_assigned_meals = matching_assigned_meals.order({ :assigned_to => :asc })
+    @list_of_assigned_meals = matching_assigned_meals.where(creator_id: current_user.id).order({ :assigned_to => :asc })
     
     render({ :template => "dishes/index" })
   end
 
   def show
     the_id = params.fetch("path_id")
-
     matching_dishes = Dish.where({ :id => the_id })
-
     @the_dish = matching_dishes.at(0)
-
+    if @the_dish.creator_id != current_user.id
+      redirect_to("/dishes", alert: "Not authorized.")
+    end
     render({ :template => "dishes/show" })
   end
   
   def create
     the_dish            = Dish.new
     the_dish.name       = params.fetch("ai_query_name")
-    the_dish.creator_id = params.fetch("query_creator_id")
+    the_dish.creator_id = current_user.id
+
 
     if the_dish.valid?
       the_dish.save
@@ -40,7 +41,10 @@ class DishesController < ApplicationController
   def update
     the_dish            = Dish.where({ :id => params.fetch("path_id") }).at(0)
     the_dish.name       = params.fetch("query_name")
-    the_dish.creator_id = params.fetch("query_creator_id")
+    # the_dish.creator_id = params.fetch("query_creator_id")
+    if the_dish.creator_id != current_user.id
+      redirect_to("/dishes", alert: "Not authorized.")
+    end
 
     if the_dish.valid?
       the_dish.save
@@ -67,7 +71,9 @@ class DishesController < ApplicationController
     the_dish = Dish.where({ :id => the_id }).at(0)
 
     the_dish.destroy
-
+    if the_dish.creator_id != current_user.id
+      redirect_to("/dishes", alert: "Not authorized.")
+    end
     redirect_to("/dishes", { :notice => "Dish deleted successfully."} )
   end
 

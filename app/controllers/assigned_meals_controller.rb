@@ -1,8 +1,9 @@
 class AssignedMealsController < ApplicationController
   def index
+    @list_of_dishes = Dish.where(user_id: current_user.id)
     matching_assigned_meals = AssignedMeal.all
 
-    @list_of_assigned_meals = matching_assigned_meals.order({ :assigned_to => :asc })
+    @list_of_assigned_meals = matching_assigned_meals.where(user_id: current_user.id).order({ :assigned_to => :asc })
 
     render({ :template => "assigned_meals/index" })
   end
@@ -21,7 +22,8 @@ class AssignedMealsController < ApplicationController
     the_assigned_meal = AssignedMeal.new
     the_assigned_meal.dish_id = params.fetch("query_dish_id")
     the_assigned_meal.assigned_to = params.fetch("query_assigned_to")
-    the_assigned_meal.user_id = params.fetch("query_user_id")
+    the_assigned_meal.user_id = current_user.id
+
 
     if the_assigned_meal.valid?
       the_assigned_meal.save

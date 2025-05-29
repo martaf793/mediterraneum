@@ -2,7 +2,8 @@
 <% start_of_week = today - ((today.wday + 6) % 7) %>
 <% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
 
-<h1 class="my-3">Weekly Meal Plan</h1>
+<h1 class="my-3">Weekly Meal Plan </h1>
+<p> <%= current_user.email%> </p>
 
 <div class="container-fluid px-3">
   <div class="row" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
