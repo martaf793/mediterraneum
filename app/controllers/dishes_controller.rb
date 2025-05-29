@@ -1,7 +1,4 @@
 class DishesController < ApplicationController
-  require "http"
-  require "json"
-  require "awesome_print"
 
   def index
     @q=Dish.ransack(params[:q])
@@ -43,6 +40,8 @@ class DishesController < ApplicationController
     if @the_description.blank?
       @notes = "You must provide a description."
     else
+      require "http"
+      require "json"
       client = OpenAI::Client.new({ :access_token => ENV.fetch("OPENAI_TOKEN") })
 
       messages_array = [
@@ -75,10 +74,11 @@ class DishesController < ApplicationController
         },
         "required": ["food_group_counts", "notes"]
       }
-      response_format = JSON.parse("{
-        \"type\": \"json_schema\",
-        \"json_schema\": #{schema_from_generator}
-      }")
+      response_format = {
+        type: "json_schema",
+        json_schema: schema
+      }
+
       request_headers_hash = {
         "Authorization" => "Bearer #{ENV.fetch("OPENAI_TOKEN")}",
         "content-type" => "application/json"
@@ -94,10 +94,11 @@ class DishesController < ApplicationController
         "https://api.openai.com/v1/chat/completions",
         :body => request_body_json
       ).to_s
-
+      pp raw_response
       parsed_response = JSON.parse(raw_response)
-
+      pp parsed_response
       message_content = parsed_response.dig("choices", 0, "message", "content")
+      
 
       structured_output = JSON.parse(message_content)
       fg     = structured_output.fetch("food_group_counts")

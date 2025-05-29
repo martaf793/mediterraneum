@@ -40,23 +40,20 @@
       Add a new dish
     </h2>
 
-    <form action="/insert_dish" method="post">
+    <form action="/analyze_dish" method="post">
       <div>
         <label for="name_box">
-          Name
+          Meal description
         </label>
-        <input type="text" id="name_box" name="query_name">
+        <input type="text" id="name_box" name="query_name"  placeholder="e.g. salmon with quinoa and broccoli">
       </div>
 
       <div>
-        <label for="creator_id_box">
-          Creator
-        </label>
         <input type="hidden" name="query_creator_id" value="<%= current_user.id %>">
       </div>
 
       <button>
-        Create dish
+        Create and analyze meal
       </button>
     </form>
   </div>
