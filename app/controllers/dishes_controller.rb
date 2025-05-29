@@ -35,16 +35,24 @@ class DishesController < ApplicationController
   end
 
   def process_inputs
-    # 1) copy index’s setup so the view has everything it expects:
+    # 1) Grab the meal description and creator, then save a new Dish
+    the_dish = Dish.new
+    the_dish.name       = params.fetch("ai_query_name", "")
+    the_dish.creator_id = params.fetch("query_creator_id")
+    if the_dish.valid?
+      the_dish.save
+    else
+      @alert="Provide a meal description"
+    end
+
+    # 2) Re-build everything that index needs
     @q                  = Dish.ransack(params[:q])
     @matching_dishes    = @q.result({ :distinct => true })
                              .includes(:dish_food_groups)
-    @list_of_dishes     = @matching_dishes
-                             .order({ :created_at => :desc })
-    matching_meals      = AssignedMeal.all
-    @list_of_assigned_meals = matching_meals
-                             .order({ :assigned_to => :asc })
-                             
+    @list_of_dishes     = @matching_dishes.order({ :created_at => :desc })
+    @list_of_assigned_meals =
+      AssignedMeal.all.order({ :assigned_to => :asc })
+
     @the_description = params.fetch("ai_query_name", "")
 
     if @the_description.blank?
@@ -94,15 +102,15 @@ class DishesController < ApplicationController
 
       # Parse the assistant’s JSON reply
       structured = JSON.parse(content)
-      fg         = structured.fetch("food_group_counts")
+      @fg         = structured.fetch("food_group_counts")
 
-      @vegetables   = fg.fetch("vegetables").fetch("count")
-      @legumes      = fg.fetch("legumes").fetch("count")
-      @fish         = fg.fetch("fish").fetch("count")
-      @eggs         = fg.fetch("eggs").fetch("count")
-      @white_meat   = fg.fetch("white_meat").fetch("count")
-      @red_meat     = fg.fetch("red_meat").fetch("count")
-      @whole_grains = fg.fetch("whole_grains").fetch("count")
+      @vegetables   = @fg.fetch("vegetables").fetch("count")
+      @legumes      = @fg.fetch("legumes").fetch("count")
+      @fish         = @fg.fetch("fish").fetch("count")
+      @eggs         = @fg.fetch("eggs").fetch("count")
+      @white_meat   = @fg.fetch("white_meat").fetch("count")
+      @red_meat     = @fg.fetch("red_meat").fetch("count")
+      @whole_grains = @fg.fetch("whole_grains").fetch("count")
       @notes        = structured.fetch("notes")
     end
 
