@@ -1,4 +1,8 @@
 class DishesController < ApplicationController
+  require "http"
+  require "json"
+  require "awesome_print"
+
   def index
     @q=Dish.ransack(params[:q])
     @matching_dishes = @q.result(:distinct => true).includes(:dish_food_groups)
@@ -31,73 +35,86 @@ class DishesController < ApplicationController
     else
       redirect_to("/dishes#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
     end
+  end
 
-    def process_inputs
-      @the_description = params.fetch("query_name", "")
+  def process_inputs
+    @the_description = params.fetch("query_name", "")
 
-      chat = OpenAI::Chat.new
-      chat.model = "gpt-4.1-nano"
-      chat.system("You are an expert nutritionist. Your job is to assess how many instances of these food groups categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal.  You should also add notes on how you arrived at these figures, and any other notes you have. The user will provide a description of the meal.")
-      chat.schema = '{
-        "query_name": "User-entered string describing the meal",
-        "food_group_counts": {
-          "vegetables": {
-            "count": 0,
-            "examples": []
-          },
-          "legumes": {
-            "count": 0,
-            "examples": []
-          },
-          "fish": {
-            "count": 0,
-            "examples": []
-          },
-          "eggs": {
-            "count": 0,
-            "examples": []
-          },
-          "white_meat": {
-            "count": 0,
-            "examples": []
-          },
-          "red_meat": {
-            "count": 0,
-            "examples": []
-          },
-          "whole_grains": {
-            "count": 0,
-            "examples": []
-          }
+    if @the_description.blank?
+      @notes = "You must provide a description."
+    else
+      client = OpenAI::Client.new({ :access_token => ENV.fetch("OPENAI_TOKEN") })
+
+      messages_array = [
+        {
+          role: "system",
+          content: "You are an expert nutritionist. Your job is to assess how many instances of these food group categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal. The user will provide a description of the meal. Respond in valid JSON according to the provided schema."
         },
+        {
+          role: "user",
+          content: @the_description
+        }
+      ]
 
-        "notes": "Detailed explanation of how the counts were assessed, ambiguities, or any clarifications (e.g., ingredients that might be borderline).",
+      schema = {
+        "type": "object",
+        "properties": {
+          "food_group_counts": {
+            "type": "object",
+            "properties": {
+              "vegetables": { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "legumes":    { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "fish":       { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "eggs":       { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "white_meat": { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "red_meat":   { "type": "object", "properties": { "count": { "type": "integer" } } },
+              "whole_grains": { "type": "object", "properties": { "count": { "type": "integer" } } }
+            }
+          },
+          "notes": { "type": "string" }
+        },
+        "required": ["food_group_counts", "notes"]
+      }
+      response_format = JSON.parse("{
+        \"type\": \"json_schema\",
+        \"json_schema\": #{schema_from_generator}
+      }")
+      request_headers_hash = {
+        "Authorization" => "Bearer #{ENV.fetch("OPENAI_TOKEN")}",
+        "content-type" => "application/json"
+      }
+      request_body = {
+        "model" =>"gpt-4o",
+        "messages" => messages_array,
+        "response_format" => response_format
+      }
+      request_body_json = JSON.generate(request_body)
 
-        "other_considerations": "General nutrition advice, suggestions for improvement, or additional observations relevant to the meal."
-      }'
-      if @the_description.blank?
-          @notes = "You must provide at least one of image or description."
-      else
-        if @the_description.present?
-          chat.user(@the_description)
-        end
+      raw_response = HTTP.headers(request_headers_hash).post(
+        "https://api.openai.com/v1/chat/completions",
+        :body => request_body_json
+      ).to_s
 
-        result = chat.assistant!
+      parsed_response = JSON.parse(raw_response)
 
-        @vegetables = result.fetch("vegetables").at(0).fetch("count")
-        @legumes = result.fetch("legumes")
-        @fish = result.fetch("fish")
-        @eggs = result.fetch("eggs")
-        @white_meat = result.fetch("white_meat")
-        @red_meat = result.fetch("red_meat")
-        @whole_grains = result.fetch("whole_grains")
-        @notes = result.fetch("notes")
-    
-      end
+      message_content = parsed_response.dig("choices", 0, "message", "content")
+
+      structured_output = JSON.parse(message_content)
+      fg     = structured_output.fetch("food_group_counts")
+
+        @vegetables   = fg.fetch("vegetables").fetch("count")
+        @legumes      = fg.fetch("legumes").fetch("count")
+        @fish         = fg.fetch("fish").fetch("count")
+        @eggs         = fg.fetch("eggs").fetch("count")
+        @white_meat   = fg.fetch("white_meat").fetch("count")
+        @red_meat     = fg.fetch("red_meat").fetch("count")
+        @whole_grains = fg.fetch("whole_grains").fetch("count")
+  
+    end
 
       render({ :template => "dishes/index" })
-    end 
-  end
+  end 
+  
 
   def update
     the_id = params.fetch("path_id")

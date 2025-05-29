@@ -66,6 +66,7 @@ Rails.application.routes.draw do
 
   # CREATE
   post("/insert_dish", { :controller => "dishes", :action => "create" })
+  post("/analyze_dish", { :controller => "dishes", :action => "process_inputs" })
        
   # READ
   get("/dishes", { :controller => "dishes", :action => "index" })
