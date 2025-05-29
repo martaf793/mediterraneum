@@ -41,10 +41,19 @@
   <div>
   <% FoodGroup.all.each do |fg| %>
     <label>
-      <%= check_box_tag('q[food_groups_id_eq_any][]', fg.id, (true if @q.dish_food_groups_id_eq_any.try(:include?, fg.id))) %>
+      <%= check_box_tag(
+            'q[food_groups_id_eq_any][]',
+            fg.id,
+            (params.dig(:q, :food_groups_id_eq_any) || []).include?(fg.id.to_s)
+          ) %>
       <%= fg.name %>
     </label>
   <% end %>
+
+
+
+      
+
   </div>
 
   <%= f.submit :class => "btn btn-primary btn-block" %>
