@@ -56,7 +56,7 @@ class DishesController < ApplicationController
       # 2) Re-analyze with AI and re-insert
       analyze_and_save_counts(the_dish)
 
-      redirect_to("/dishes", { :notice => "Dish updated and re-analyzed!" }) 
+      redirect_to("/dishes/#{ the_dish.id }", { :notice => "Dish updated and re-analyzed!" }) 
     else
       redirect_to(
         "/dishes/#{ the_dish.id }",
