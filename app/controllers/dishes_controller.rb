@@ -61,7 +61,7 @@ class DishesController < ApplicationController
       )
     end
   end
-  
+
   def destroy
     the_id = params.fetch("path_id")
     the_dish = Dish.where({ :id => the_id }).at(0)
@@ -102,7 +102,7 @@ class DishesController < ApplicationController
           {
             "role"    => "system",
             "content" =>
-              "You are an expert nutritionist. Your job is to assess how many instances of these food group categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal. The user will provide a description of the meal. Respond in valid JSON according to the provided schema." \
+              "You are an expert nutritionist. For each meal, identify how many ingredients belong to each of these food groups: vegetables, legumes (beans, lentils, chickpeas), fish, eggs, white meat (chicken, turkey), red meat (beef, lamb, pork), whole grains (brown rice, quinoa, oats). Return your count for each." \
               "#{JSON.generate(schema)}"
           },
           {
