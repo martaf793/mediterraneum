@@ -14,6 +14,8 @@ class AssignedMealsController < ApplicationController
     matching_assigned_meals = AssignedMeal.where({ :id => the_id })
 
     @the_assigned_meal = matching_assigned_meals.at(0)
+    @the_assigned_meal.user_id = current_user.id
+
 
     render({ :template => "assigned_meals/show" })
   end
@@ -37,17 +39,26 @@ class AssignedMealsController < ApplicationController
     the_id = params.fetch("path_id")
     the_assigned_meal = AssignedMeal.where({ :id => the_id }).at(0)
 
-    the_assigned_meal.dish_id = params.fetch("query_dish_id")
+    pp "--- PARAMS ---"
+    pp params
+    pp "--- BEFORE ASSIGN? ---"
+    pp the_assigned_meal.assigned_to
+
     the_assigned_meal.assigned_to = params.fetch("query_assigned_to")
-    the_assigned_meal.user_id = params.fetch("query_user_id")
+        
+    pp "--- AFTER ASSIGN? ---"
+    pp the_assigned_meal.assigned_to
 
     if the_assigned_meal.valid?
       the_assigned_meal.save
+      pp "✔︎ saved!"
       redirect_to("/assigned_meals/#{the_assigned_meal.id}", { :notice => "Assigned meal updated successfully."} )
     else
+      pp "✘ validation failed:"
+      pp the_assigned_meal.errors.full_messages
       redirect_to("/assigned_meals/#{the_assigned_meal.id}", { :alert => the_assigned_meal.errors.full_messages.to_sentence })
     end
-  end
+  end 
 
   def destroy
     the_id = params.fetch("path_id")

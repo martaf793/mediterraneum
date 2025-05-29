@@ -15,7 +15,7 @@ class DishesController < ApplicationController
     matching_dishes = Dish.where({ :id => the_id })
     @the_dish = matching_dishes.at(0)
     if @the_dish.creator_id != current_user.id
-      redirect_to("/dishes", alert: "Not authorized.")
+      redirect_to("/dishes", alert: "Not authorized.") and return
     end
     render({ :template => "dishes/show" })
   end
@@ -42,7 +42,7 @@ class DishesController < ApplicationController
     the_dish.name       = params.fetch("query_name")
     # the_dish.creator_id = params.fetch("query_creator_id")
     if the_dish.creator_id != current_user.id
-      redirect_to("/dishes", alert: "Not authorized.")
+      redirect_to("/dishes", alert: "Not authorized.") and return
     end
 
     if the_dish.valid?
@@ -56,12 +56,12 @@ class DishesController < ApplicationController
       # 2) Re-analyze with AI and re-insert
       analyze_and_save_counts(the_dish)
 
-      redirect_to("/dishes", { :notice => "Dish updated and re-analyzed!" })
+      redirect_to("/dishes", { :notice => "Dish updated and re-analyzed!" }) 
     else
       redirect_to(
         "/dishes/#{ the_dish.id }",
         { :alert => the_dish.errors.full_messages.to_sentence }
-      )
+      ) 
     end
   end
 
@@ -71,7 +71,7 @@ class DishesController < ApplicationController
 
     the_dish.destroy
     if the_dish.creator_id != current_user.id
-      redirect_to("/dishes", alert: "Not authorized.")
+      redirect_to("/dishes", alert: "Not authorized.") and return
     end
     redirect_to("/dishes", { :notice => "Dish deleted successfully."} )
   end
