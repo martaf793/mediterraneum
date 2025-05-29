@@ -87,37 +87,19 @@
       </tr>
 
       <% @list_of_assigned_meals.each do |an_assigned_meal| %>
-      <tr>
-<!--        <td>-->
-          <%#= an_assigned_meal.id %>
-<!--        </td>-->
-
-        <td>
-          <%= an_assigned_meal.dish.name %>
-        </td>
-
-        <td>
-          <%= an_assigned_meal.assigned_to.strftime("%a %b %e, %Y") %>
-        </td>
-
-        <td>
-          <%= an_assigned_meal.user.email %>
-        </td>
-
-        <td>
-          <%= time_ago_in_words(an_assigned_meal.created_at) %> ago
-        </td>
-        <td>
-          <%= time_ago_in_words(an_assigned_meal.updated_at) %> ago
-        </td>
-
-        <td>
-          <a href="/assigned_meals/<%= an_assigned_meal.id %>">
-            Show details
-          </a>
-        </td>
-      </tr>
+      <% if an_assigned_meal.dish.present? %> <!-- only show rows with a dish -->
+        <tr>
+          <td><%= an_assigned_meal.dish.name %></td>
+          <td><%= an_assigned_meal.assigned_to.strftime("%a %b %e, %Y") %></td>
+          <td><%= an_assigned_meal.user.email %></td>
+          <td><%= time_ago_in_words(an_assigned_meal.created_at) %> ago</td>
+          <td><%= time_ago_in_words(an_assigned_meal.updated_at) %> ago</td>
+          <td>
+            <a href="/assigned_meals/<%= an_assigned_meal.id %>">Show details</a>
+          </td>
+        </tr>
       <% end %>
+    <% end %>
     </table>
   </div>
 </div>

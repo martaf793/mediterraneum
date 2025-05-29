@@ -45,7 +45,7 @@
       <%= fg.name %>
     </label>
   <% end %>
-</div>
+  </div>
 
   <%= f.submit :class => "btn btn-primary btn-block" %>
   
@@ -58,9 +58,6 @@
     <table border="1">
       <tr>
         <th>Name</th>
-        <% FoodGroup.all.each do |fg| %>
-          <th><%= fg.name.capitalize %></th>
-        <% end %>
         <th></th>
 
       </tr>
@@ -69,12 +66,6 @@
       <% @list_of_dishes.each do |a_dish| %>
       <tr>
         <td><%= a_dish.name %></td>
-
-        <% FoodGroup.all.each do |fg| %>
-          <% dfg = a_dish.dish_food_groups.find { |x| x.food_group_id == fg.id } %>
-          <td><%= dfg.present? ? dfg.number_of_instances : 0 %></td>
-        <% end %>
-
         <td>
           <a href="/dishes/<%= a_dish.id %>">Show details</a>
         </td>

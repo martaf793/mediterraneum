@@ -1,18 +1,14 @@
-
-<%#— 1) compute Monday of this week —%>
-<% today         = Date.today %>
+<% today = Date.today %>
 <% start_of_week = today - ((today.wday + 6) % 7) %>
-
-<%#— 2) group all AssignedMeals by their date —%>
 <% assignments_by_date = @list_of_assigned_meals.
      group_by { |am| am.assigned_to } %>
 
-<%#— 3) figure out the max number of assignments on any day —%>
+
 <% max_rows = assignments_by_date.
      values.
      map { |ams| ams.count }.
      max.
-     to_i %>  <%# to_i handles the case of nil when there are no assignments %>
+     to_i %>  
 
 <div>
   <h1>Weekly Meal Plan</h1>
@@ -23,26 +19,27 @@
         <th><%= (start_of_week + offset).strftime("%a %b %e") %></th>
       <% end %>
     </tr>
-
-    <%#— loop exactly max_rows times —%>
     <% max_rows.times do |slot_index| %>
       <tr>
-        <td>Dish number <%= slot_index + 1 %></td>
-
-        <%#— for each day, try to pull out the slot_index’th meal —%>
+        <td>Dish <%= slot_index + 1 %></td>
         <% (0..6).each do |offset| %>
-          <% day   = start_of_week + offset %>
+          <% day = start_of_week + offset %>
           <% todays = assignments_by_date.fetch(day, []) %>
-          <% assigned = todays.at(slot_index) %>
-
+          <% assignment = todays[slot_index] %>
           <td>
-            <% if assigned %>
-              <%= assigned.dish.name %>
+            <% if assignment && assignment.dish.present? %>
+              <a href="/assigned_meals/<%= assignment.id %>">
+                <%= assignment.dish.name %>
+              </a>
+            <% else %>
+              <a href="/assigned_meals">Assign a dish for today</a>
             <% end %>
           </td>
         <% end %>
       </tr>
     <% end %>
+
+    </tr>
   </table>
 </div>
 

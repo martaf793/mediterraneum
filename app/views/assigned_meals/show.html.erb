@@ -1,12 +1,15 @@
 <div>
   <div>
-    <h1>
       <%# matching_dish=Dish.where({:id=>@the_assigned_meal.dish_id})%>
       <%#the_dish=matching_dish.at(0)%>
       <%#=the_dish_name=the_dish.name.capitalize %> 
 <!--      for <%#= @the_assigned_meal.assigned_to.strftime("%b %e, %Y") %>-->
-      <%=@the_assigned_meal.dish.name%>
-
+      <h1>
+      <% if @the_assigned_meal.dish.present? %>
+        <%= @the_assigned_meal.dish.name %>
+      <% else %>
+        <em>Dish has been deleted</em>
+      <% end %>
     </h1>
 
     <div>
