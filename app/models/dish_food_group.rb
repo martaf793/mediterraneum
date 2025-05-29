@@ -18,3 +18,4 @@ class DishFoodGroup < ApplicationRecord
     ["food_group_id", "id"]
   end 
 end
+
