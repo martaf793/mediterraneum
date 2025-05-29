@@ -35,20 +35,27 @@
   <h2>Narrow results:</h2>
   <div>
     <%= f.label :name_cont, "Dish containing" %>
-    <%= f.text_field :name_cont, :placeholder => "...dish name contains " %>
+    <%= f.search_field :name_cont, :placeholder => "...dish name contains " %>
+
   </div>
 
+  <%= f.hidden_field(
+       :dish_food_groups_number_of_instances_gt, 
+       { :value => 0 }
+     ) %>
+
   <div>
-  <% FoodGroup.all.each do |fg| %>
-    <label>
-      <%= check_box_tag(
-            'q[food_groups_id_eq_any][]',
-            fg.id,
-            (params.dig(:q, :food_groups_id_eq_any) || []).include?(fg.id.to_s)
-          ) %>
-      <%= fg.name %>
-    </label>
-  <% end %>
+    <% FoodGroup.all.each do |fg| %>
+      <label>
+        <%= check_box_tag(
+              'q[dish_food_groups_food_group_id_eq_any][]',
+              fg.id,
+              (params.dig(:q, :dish_food_groups_food_group_id_eq_any) || []).include?(fg.id.to_s)
+            ) %>
+        <%= fg.name %>
+      </label>
+    <% end %>
+
 
 
 

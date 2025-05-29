@@ -15,7 +15,9 @@ class DishFoodGroup < ApplicationRecord
   belongs_to :food_group, required: true, class_name: "FoodGroup", foreign_key: "food_group_id"
   
   def self.ransackable_attributes(auth_object=nil)
-    ["food_group_id", "id"]
+    ["food_group_id", "id","number_of_instances"]
   end 
+    def self.ransackable_associations(auth_object = nil)
+    return ["dish", "food_group"]
+  end
 end
-
