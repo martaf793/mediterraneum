@@ -22,97 +22,79 @@ class DishesController < ApplicationController
   end
 
   def create
-    the_dish = Dish.new
-    the_dish.name = params.fetch("query_name")
+    the_dish            = Dish.new
+    the_dish.name       = params.fetch("ai_query_name")
     the_dish.creator_id = params.fetch("query_creator_id")
 
     if the_dish.valid?
       the_dish.save
-      redirect_to("/dishes", { :notice => "Dish created successfully." })
-    else
-      redirect_to("/dishes#{the_dish.id}", { :alert => the_dish.errors.full_messages.to_sentence })
-    end
-  end
-
-  def process_inputs
-    # 1) Grab the meal description and creator, then save a new Dish
-    the_dish = Dish.new
-    the_dish.name       = params.fetch("ai_query_name", "")
-    the_dish.creator_id = params.fetch("query_creator_id")
-    if the_dish.valid?
-      the_dish.save
-    else
-      @alert="Provide a meal description"
-    end
-
-    # 2) Re-build everything that index needs
-    @q                  = Dish.ransack(params[:q])
-    @matching_dishes    = @q.result({ :distinct => true })
-                             .includes(:dish_food_groups)
-    @list_of_dishes     = @matching_dishes.order({ :created_at => :desc })
-    @list_of_assigned_meals =
-      AssignedMeal.all.order({ :assigned_to => :asc })
-
-    @the_description = params.fetch("ai_query_name", "")
-
-    if @the_description.blank?
-      @notes = "You must provide a description."
-    else
       require "http"
       require "json"
-      # Build the Chat Completions request
+
       body_hash = {
         "model"    => "gpt-3.5-turbo",
         "messages" => [
           {
             "role"    => "system",
             "content" =>
-              "You are an expert nutritionist. " \
-              "Given a meal description, return JSON with this schema:\n" \
+              "You are an expert nutritionist. Your job is to assess how many instances of these food group categories (vegetables, legumes, fish, eggs, white meat, red meat and whole grains) are in a meal. The user will provide a description of the meal. Respond in valid JSON according to the provided schema." \
+              "return JSON matching this schema:\n" \
               "{\"food_group_counts\":{" \
                 "\"vegetables\":{\"count\":0},\"legumes\":{\"count\":0}," \
                 "\"fish\":{\"count\":0},\"eggs\":{\"count\":0}," \
                 "\"white_meat\":{\"count\":0},\"red_meat\":{\"count\":0}," \
                 "\"whole_grains\":{\"count\":0}" \
-              "}," \
-              "\"notes\":\"string\"}"
+              "},\"notes\":\"string\"}"
           },
           {
             "role"    => "user",
-            "content" => @the_description
+            "content" => the_dish.name
           }
         ]
       }
 
-      raw = HTTP.auth("Bearer #{ENV.fetch("OPENAI_TOKEN")}")
-                .post(
-                  "https://api.openai.com/v1/chat/completions",
-                  :json => body_hash
-                )
-                .to_s
-
+      raw    = HTTP.auth("Bearer #{ENV.fetch("OPENAI_TOKEN")}")
+                  .post(
+                    "https://api.openai.com/v1/chat/completions",
+                    :json => body_hash
+                  )
+                  .to_s
       parsed = JSON.parse(raw)
 
-      # Drill into the first choice's message
-      content = parsed
-                  .fetch("choices")
-                  .at(0)
-                  .fetch("message")
-                  .fetch("content")
-
-      # Parse the assistant’s JSON reply
+      content    = parsed
+                    .fetch("choices")
+                    .at(0)
+                    .fetch("message")
+                    .fetch("content")
       structured = JSON.parse(content)
-      @fg         = structured.fetch("food_group_counts")
+      fg_counts  = structured.fetch("food_group_counts")
 
-      @vegetables   = @fg.fetch("vegetables").fetch("count")
-      @legumes      = @fg.fetch("legumes").fetch("count")
-      @fish         = @fg.fetch("fish").fetch("count")
-      @eggs         = @fg.fetch("eggs").fetch("count")
-      @white_meat   = @fg.fetch("white_meat").fetch("count")
-      @red_meat     = @fg.fetch("red_meat").fetch("count")
-      @whole_grains = @fg.fetch("whole_grains").fetch("count")
-      @notes        = structured.fetch("notes")
+      # 3) persist each count into the join table
+      fg_counts.each do |fg_key, fg_data|
+        # map "white_meat" → "white meat"  etc, to match your FoodGroup.name
+        group_name      = fg_key.tr("_", " ")
+        matching_groups = FoodGroup.where({ :name => group_name })
+        the_group       = matching_groups.at(0)
+        next unless the_group
+
+        dfg = DishFoodGroup.new
+        dfg.dish_id             = the_dish.id
+        dfg.food_group_id       = the_group.id
+        dfg.number_of_instances = fg_data.fetch("count")
+        dfg.save
+      end
+
+      flash[:notice] = "Dish created and analyzed!"
+    else
+      flash[:alert] = the_dish.errors.full_messages.to_sentence
     end
+
+    @q               = Dish.ransack(params[:q])
+    @matching_dishes = @q.result({ :distinct => true })
+                        .includes(:dish_food_groups)
+    @list_of_dishes  = @matching_dishes.order({ :created_at => :desc })
+    @list_of_assigned_meals =
+      AssignedMeal.all.order({ :assigned_to => :asc })
 
     render({ :template => "dishes/index" })
   end

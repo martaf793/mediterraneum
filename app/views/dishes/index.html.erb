@@ -1,31 +1,3 @@
-<dl>
-<%@alert%>
-<%@fg%>
-  <dt>Vegetables</dt>
-  <dd><%= @vegetables %></dd>
-
-  <dt>Legumes</dt>
-  <dd><%= @legumes %></dd>
-
-  <dt>Fish</dt>
-  <dd><%= @fish %></dd>
-
-  <dt>Eggs </dt>
-  <dd><%= @eggs %></dd>
-  
-  <dt>White meat </dt>
-  <dd><%= @white_meat %></dd>
-
-  <dt>Red meat </dt>
-  <dd><%= @red_meat %></dd>
-
-  <dt>Whole grains </dt>
-  <dd><%= @whole_grains %></dd>
-
-  <dt>Notes</dt>
-  <dd><%= simple_format(@notes) %></dd>
-</dl>
-
 <div>
   <div>
     <h1>
@@ -42,7 +14,7 @@
       Add a new dish
     </h2>
 
-    <form action="/analyze_dish" method="post">
+    <form action="/insert_dish" method="post">
       <div>
         <label for="ai_query_name">
           Meal description
@@ -86,46 +58,29 @@
     <table border="1">
       <tr>
         <th>Name</th>
-<!--        <th>Creator</th>
-        <th>Created at</th>
-        <th>Updated at</th>-->
-        <% food_group_counts = @list_of_dishes.map { |dish| dish.dish_food_groups.count } %>
-        <% if food_group_counts.any? %>
-          <% max_food_groups = food_group_counts.max %>
-        <% else %>
-          <% max_food_groups = 0 %>
-        <% end %>
-
-        <% max_food_groups.times do |i| %>
-        <th>Food group <%= i + 1 %></th>
+        <% FoodGroup.all.each do |fg| %>
+          <th><%= fg.name.capitalize %></th>
         <% end %>
         <th></th>
+
       </tr>
 
+      
       <% @list_of_dishes.each do |a_dish| %>
-        <tr>
-          <td><%= a_dish.name %></td>
-<!--          <td><%#= a_dish.creator.email %></td>
-          <td><%#= time_ago_in_words(a_dish.created_at) %> ago</td>
-          <td><%#= time_ago_in_words(a_dish.updated_at) %> ago</td>-->
-          
-        <% food_groups = a_dish.dish_food_groups.includes(:food_group) %>
-        <% max_food_groups.times do |i| %>
-          <% if food_groups[i] %>
-            <td><%= food_groups[i].food_group.name %></td>
-          <% else %>
-            <td></td>
-          <% end %>
+      <tr>
+        <td><%= a_dish.name %></td>
+
+        <% FoodGroup.all.each do |fg| %>
+          <% dfg = a_dish.dish_food_groups.find { |x| x.food_group_id == fg.id } %>
+          <td><%= dfg.present? ? dfg.number_of_instances : 0 %></td>
         <% end %>
 
-
-          <td>
-            <a href="/dishes/<%= a_dish.id %>">
-              Show details
-            </a>
-          </td>
-        </tr>
+        <td>
+          <a href="/dishes/<%= a_dish.id %>">Show details</a>
+        </td>
+      </tr>
       <% end %>
+
     </table>
   </div>
 </div>
