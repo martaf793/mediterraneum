@@ -8,8 +8,8 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <link rel="stylesheet" href="/css/my_styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.css">
+<!--    <link rel="stylesheet" href="/css/my_styles.css">
+-->    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Expand the number of characters we can use in the document beyond basic ASCII 🎉 -->
     <meta charset="utf-8">
@@ -29,29 +29,51 @@
   </head>
   
   <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+           <img src="/assets/logo.png" alt="Logo" height="40" class="me-2"> 
+           <span class="fs-3 fw-bold text-primary me-2"></span> MEDITERRANEUM
+        </a>
 
-      <nav class="navbar navbar-expand-lg bg-light mb-4">
-      <div class="container">
-        <a class="navbar-brand" href="/">MEDITERRANEUM</a>
-        <% if current_user != nil %>
-        <a href="/dishes">Dishes</a>
-        <a href="/assigned_meals">Assigned Meals</a>
-        <a href="/food_groups">Food Groups</a>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Profile
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/users/edit">Edit profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/users/sign_out">Sign out</a></li>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <% if current_user %>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/dishes">Dishes</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/assigned_meals">Assigned Meals</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/food_groups">Food Groups</a>
+              </li>
+              <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Profile
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/users/edit">Edit profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/users/sign_out">Sign out</a></li>
+                </ul>
+              </li>
+            </ul>
+            <% else %>
+              <li class="nav-item">
+                <a class="nav-link" href="/users/sign_up">Sign up</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/users/sign_in">Sign in</a>
+              </li>
+            <% end %>
           </ul>
-        </li>
-
-        <% else%>
-        <a href="/users/sign_up">Sign up</a>
-        <a href="/users/sign_in">Sign in</a>
-        <% end %>
+        </div>
       </div>
     </nav>
     
