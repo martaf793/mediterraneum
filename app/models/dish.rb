@@ -3,6 +3,7 @@
 # Table name: dishes
 #
 #  id         :bigint           not null, primary key
+#  ai_notes   :text
 #  name       :string
 #  notes      :text
 #  created_at :datetime         not null

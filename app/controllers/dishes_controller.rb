@@ -97,9 +97,9 @@ class DishesController < ApplicationController
               "whole_grains" => { "type" => "object", "properties" => { "count" => { "type" => "integer" } } }
             }
           },
-          "notes" => { "type" => "string" }
+          "AI_notes" => { "type" => "string" }
         },
-        "required" => ["food_group_counts", "notes"]
+        "required" => ["food_group_counts", "AI_notes"]
       }
 
       body_hash = {
@@ -132,6 +132,9 @@ class DishesController < ApplicationController
                             .fetch("message")
                             .fetch("content")
       structured_output = JSON.parse(content)
+      dish.ai_notes = structured_output.fetch("AI_notes")
+      dish.save
+
       fg_counts         = structured_output.fetch("food_group_counts")
 
       # persist each count into the join table

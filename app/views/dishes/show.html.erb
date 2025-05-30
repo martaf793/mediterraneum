@@ -31,6 +31,17 @@
       <dt class="col-sm-3 fw-bold">Notes</dt>
       <dd class="col-sm-9"><%= simple_format(@the_dish.notes) %></dd>
     <% end %>
+    
+    <% if @the_dish.notes.present? %>
+      <dt class="col-sm-3 fw-bold">Notes</dt>
+      <dd class="col-sm-9"><%= simple_format(@the_dish.notes) %></dd>
+    <% end %>
+
+    <% if @the_dish.ai_notes.present? %>
+      <dt class="col-sm-3 fw-bold">AI Notes</dt>
+      <dd class="col-sm-9 text-muted"><%= simple_format(@the_dish.ai_notes) %></dd>
+    <% end %>
+
 
     <dt class="col-sm-3 fw-bold text-muted small mb-0">Creator</dt>
     <dd class="col-sm-9 text-muted small mb-0 py-0"><%= @the_dish.creator.email %></dd>
