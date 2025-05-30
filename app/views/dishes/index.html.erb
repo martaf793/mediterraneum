@@ -50,7 +50,7 @@
 
     <div class="form-group">
       <% FoodGroup.all.each do |fg| %>
-        <div class="form-check">
+        <div class="form-check form-check-inline mb-2">
           <label class="form-check-label">
             <%= check_box_tag(
                   'q[dish_food_groups_food_group_id_eq_any][]',
