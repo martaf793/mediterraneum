@@ -23,7 +23,7 @@
         Name
       </dt>
       <dd>
-        <%= @the_food_group.name %>
+        <%= @the_food_group.name.capitalize %>
       </dd>
     <hr>
 
@@ -35,7 +35,7 @@
             <% if dfg.dish.present? %>
               <li>
                 <a href="/dishes/<%= dfg.dish.id %>">
-                  <%= dfg.dish.name %>
+                  <%= dfg.dish.name.capitalize %>
                 </a>
                 : <%= dfg.number_of_instances %>
               </li>
