@@ -40,6 +40,7 @@ class DishesController < ApplicationController
   def update
     the_dish            = Dish.where({ :id => params.fetch("path_id") }).at(0)
     the_dish.name       = params.fetch("query_name")
+    the_dish.notes = params.fetch("query_notes")
     # the_dish.creator_id = params.fetch("query_creator_id")
     if the_dish.creator_id != current_user.id
       redirect_to("/dishes", alert: "Not authorized.") and return

@@ -27,6 +27,10 @@
         </div>
       </dd>
     <% end %>
+    <% if @the_dish.notes.present? %>
+      <dt class="col-sm-3 fw-bold">Notes</dt>
+      <dd class="col-sm-9"><%= simple_format(@the_dish.notes) %></dd>
+    <% end %>
 
     <dt class="col-sm-3 fw-bold text-muted small mb-0">Creator</dt>
     <dd class="col-sm-9 text-muted small mb-0 py-0"><%= @the_dish.creator.email %></dd>
@@ -49,6 +53,11 @@
       <input type="text" id="name_box" name="query_name" class="form-control"
              value="<%= @the_dish.name.capitalize %>">
     </div>
+    <div class="mb-3">
+      <label for="notes_box" class="form-label">Notes</label>
+      <textarea id="notes_box" name="query_notes" class="form-control" rows="3"><%= @the_dish.notes %></textarea>
+    </div>
+
 
     <input type="hidden" name="query_creator_id" value="<%= @the_dish.creator_id %>">
 
