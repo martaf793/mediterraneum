@@ -1,6 +1,6 @@
 class AssignedMealsController < ApplicationController
   def index
-    @list_of_dishes = Dish.where(user_id: current_user.id)
+    @list_of_dishes = Dish.where(creator: current_user.id)
     matching_assigned_meals = AssignedMeal.all
 
     @list_of_assigned_meals = matching_assigned_meals.where(user_id: current_user.id).order({ :assigned_to => :asc })

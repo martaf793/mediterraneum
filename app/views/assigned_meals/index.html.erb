@@ -8,10 +8,14 @@
   <form action="/insert_assigned_meal" method="post" class="row g-3">
     <div class="col-md-6">
       <label for="dish_id_box" class="form-label">Dish</label>
+      <% if @list_of_dishes.empty? %>
+        <div class="alert alert-warning" role="alert">
+          You don't have any dishes yet. Please <a href="/dishes">create a dish</a> first.
+        </div>
+      <% end %>
       <select class="form-select" id="dish_id_box" name="query_dish_id">
         <option value="">Choose a dish...</option>
-        <% matching_dishes = Dish.order(:name) %>
-        <% matching_dishes.each do |a_dish| %>
+        <% @list_of_dishes.order(:name).each do |a_dish| %>
           <option value="<%= a_dish.id %>"><%= a_dish.name.capitalize %></option>
         <% end %>
       </select>
