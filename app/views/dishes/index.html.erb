@@ -1,96 +1,89 @@
 <div class="container mt-4">
-  <div >
-    <div>
-      <h1>
-        List of all dishes
-      </h1>
-    </div>
-  </div>
+  <div class= "row" >
 
-  <hr>
-
-  <div>
-    <div>
-      <h2>
-        Add a new dish
-      </h2>
-
+    <div class="col-md-3">
+      <h2>Add a new dish</h2>
       <form action="/insert_dish" method="post">
-        <div>
+        <div class="mb-2">
           <label for="ai_query_name">
             Meal description
           </label>
-          <input type="text" id="ai_query_name" name="ai_query_name"  placeholder="e.g. salmon with quinoa and broccoli">
+          <input type="text" id="ai_query_name" name="ai_query_name"  placeholder="e.g. Salmon with quinoa and broccoli">
           <input type="hidden" name="query_creator_id" value="<%= current_user.id %>">
         </div>
-        <button type="submit" class="btn btn-danger mt-2" style="background-color:rgba(128, 0, 30, 0.86); border-color:rgba(212, 63, 58, 0);">
+        <button type="submit" class="btn btn-danger w-100" style="background-color:rgba(128, 0, 30, 0.86); border-color:rgba(212, 63, 58, 0);">
           Create and analyze meal
         </button>
       </form>
     </div>
-  </div>
 
-  <hr>
-  <a class="btn btn-secondary mb-3" data-bs-toggle="collapse" href="#dish_filters">
-    Show Filters
-  </a>
-  <div class="collapse" id="dish_filters">
-  <%= search_form_for @q do |f| %>
-    <h2>Narrow results:</h2>
-    <div class="form-group">
-      <%= f.label :name_cont, "Dish containing" %>
-      <%= f.search_field :name_cont, :placeholder => "...dish name contains " %>
-
-    </div>
-
-    <%= f.hidden_field(
-        :dish_food_groups_number_of_instances_gt, 
-        { :value => 0 }
-      ) %>
-
-    <div class="form-group">
-      <% FoodGroup.all.each do |fg| %>
-        <div class="form-check form-check-inline mb-2">
-          <label class="form-check-label">
-            <%= check_box_tag(
-                  'q[dish_food_groups_food_group_id_eq_any][]',
-                  fg.id,
-                  (params.dig(:q, :dish_food_groups_food_group_id_eq_any) || []).include?(fg.id.to_s)
-                ) %>
-            <%= fg.name %>
-          </label>
+    <div class="col-md-6">
+        <h2 class="mb-3">List of all dishes</h2>
+        <div class="table-responsive mt-4">
+          <table class="table table-bordered table-striped table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>Name</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @list_of_dishes.each do |a_dish| %>
+                <tr>
+                  <td><%= a_dish.name.capitalize %></td>
+                  <td>
+                    <a class="btn btn-outline-primary btn-sm" href="/dishes/<%= a_dish.id %>">Show details</a>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
+      </div>
+
+    <div class="col-md-3">
+      <a class="btn btn-secondary mb-3" data-bs-toggle="collapse" href="#dish_filters" role="button"
+          aria-expanded="false"
+          aria-controls="dish_filters">
+        Show Filters
+      </a>
+      <div class="collapse show" id="dish_filters">
+      <%= search_form_for @q do |f| %>
+        <h4 class="fw-bold">Narrow results:</h4>
+        <div class="form-group">
+          <%= f.label :name_cont, "Dish containing" %>
+          <%= f.search_field :name_cont, :placeholder => "...Dish name contains " %>
+        </div>
+
+        <%= f.hidden_field(
+            :dish_food_groups_number_of_instances_gt, 
+            { :value => 0 }
+          ) %>
+
+        <div class="form-group">
+          <% FoodGroup.all.each do |fg| %>
+            <div class="form-check">
+              <label class="form-check-label">
+                <%= check_box_tag(
+                      'q[dish_food_groups_food_group_id_eq_any][]',
+                      fg.id,
+                      (params.dig(:q, :dish_food_groups_food_group_id_eq_any) || []).include?(fg.id.to_s)
+                    ) %>
+                <%= fg.name.capitalize %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="mb-2">
+        <%= f.submit "Search", class: "btn btn-primary w-100" %>
+      </div>
+      <div>
+        <a href="/dishes" class="btn btn-secondary w-100">Clear filters</a>
+      </div>
       <% end %>
     </div>
+
   </div>
-
-    <%= f.submit :"Search", class: "btn btn-primary btn-block mb-2" %>
-      <a href="/dishes" class="btn btn-secondary btn-block">
-      Clear filters</a>
-  <% end %>
-  <hr>
-
-  <div class="table-responsive mt-4">
-    <table class="table table-bordered table-striped table-hover">
-      <thead class="thead-light">
-        <tr>
-          <th>Name</th>
-          <th>Details</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @list_of_dishes.each do |a_dish| %>
-          <tr>
-            <td><%= a_dish.name %></td>
-            <td>
-              <a class="btn btn-outline-primary btn-sm" href="/dishes/<%= a_dish.id %>">Show details</a>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-
-
   <hr>
 </div>

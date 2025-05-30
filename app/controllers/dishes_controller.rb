@@ -107,7 +107,7 @@ class DishesController < ApplicationController
           {
             "role"    => "system",
             "content" =>
-              "You are an expert nutritionist. For each meal, identify how many ingredients belong to each of these food groups: vegetables, legumes (beans, lentils, chickpeas), fish, eggs, white meat (chicken, turkey), red meat (beef, lamb, pork), whole grains (brown rice, quinoa, oats). Return your count for each." \
+              "You are an expert nutritionist. For each meal, identify how many ingredients belong to each of these food groups: vegetables, legumes (beans, lentils, chickpeas), fish, eggs, white meat (chicken, turkey), red meat (beef, lamb, pork, pepperoni), whole grains (brown rice, quinoa, oats, pasta, pizza). Return your count for each." \
               "#{JSON.generate(schema)}"
           },
           {
