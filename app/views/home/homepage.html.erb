@@ -2,139 +2,145 @@
 <% start_of_week = today - ((today.wday + 6) % 7) %>
 <% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
 
-<h1 class="my-3">Weekly Meal Plan </h1>
-<p> <%= current_user.email%> </p>
+<div class="container mt-4">
+  <h1 class="mb-1">Weekly Meal Plan </h1>
+  <p class="mt-0"> <%= current_user.email%> </p>
 
-<div class="container-fluid px-3">
-  <div class="row" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
-    <% (0..6).each do |offset| %>
-      <% day = start_of_week + offset %>
-      <% todays = assignments_by_date.fetch(day, []).sort_by(&:created_at) %>
+  <div class="container-fluid px-3">
+    <div class="row" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+      <% (0..6).each do |offset| %>
+        <% day = start_of_week + offset %>
+        <% todays = assignments_by_date.fetch(day, []).sort_by(&:created_at) %>
 
-      <div class="col" style="min-width: 14.28%; max-width: 14.28%; flex: 0 0 14.28%;">
-        <div class="card h-100 shadow-sm border-1" style="border-color: rgba(128, 0, 32, 0.86);">
+        <div class="col" style="min-width: 14.28%; max-width: 14.28%; flex: 0 0 14.28%;">
+          <div class="card h-100 shadow-sm" style="border: 2px solid rgba(128, 0, 32, 0.86);">
 
-          <div class="card-body p-2">
-            <h6 class="card-title text-center fw-bold mb-2" style="font-size: 0.9rem;">
-              <%= day.strftime("%A") %><br><%= day.strftime("%b %e") %>
-            </h6>
+            <div class="card-body p-2">
+              <h6 class="card-title text-center fw-bold mb-2" style="font-size: 0.9rem;">
+                <%= day.strftime("%A") %><br><%= day.strftime("%b %e") %>
+              </h6>
 
-            <% if todays.any? %>
-              <ul class="list-group list-group-flush small">
-                <% todays.each do |assignment| %>
-                  <% if assignment.dish.present? %>
-                    <li class="list-group-item px-2 py-1">
-                      <a href="/assigned_meals/<%= assignment.id %>">
-                        <%= assignment.dish.name.capitalize %>
-                      </a>
-                    </li>
+              <% if todays.any? %>
+                <ul class="list-group list-group-flush small">
+                  <% todays.each do |assignment| %>
+                    <% if assignment.dish.present? %>
+                      <li class="list-group-item px-2 py-1">
+                        <a href="/assigned_meals/<%= assignment.id %>">
+                          <%= assignment.dish.name.capitalize %>
+                        </a>
+                      </li>
+                    <% end %>
                   <% end %>
-                <% end %>
-              </ul>
-            <% else %>
-              <p class="text-muted text-center mb-0" style="font-size: 0.8rem;">
-                <a href="/assigned_meals">Assign a dish</a>
-              </p>
-            <% end %>
+                </ul>
+              <% else %>
+                <p class="text-muted text-center mb-0" style="font-size: 0.8rem;">
+                  <a href="/assigned_meals">Assign a dish</a>
+                </p>
+              <% end %>
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
-</div>
 
 
 
-<% summary_by_day_and_group = {} %>
-<% (0..6).each do |offset| %>
-  <% day = start_of_week + offset %>
-  <% todays = assignments_by_date.fetch(day, []) %>
+  <% summary_by_day_and_group = {} %>
+  <% (0..6).each do |offset| %>
+    <% day = start_of_week + offset %>
+    <% todays = assignments_by_date.fetch(day, []) %>
 
-  <% @food_groups.each do |fg| %>
-    <% summary_by_day_and_group[[day, fg.name]] = 0 %>
-  <% end %>
+    <% @food_groups.each do |fg| %>
+      <% summary_by_day_and_group[[day, fg.name]] = 0 %>
+    <% end %>
 
-  <% todays.each do |assignment| %>
-    <% if assignment.dish.present? %>
-      <% dish_food_groups = assignment.dish.dish_food_groups %>
-      <% if dish_food_groups.present? %>
-        <% dish_food_groups.each do |dfg| %>
-          <% fg_name = dfg.food_group.name %>
-          <% summary_by_day_and_group[[day, fg_name]] += dfg.number_of_instances.to_i %>
+    <% todays.each do |assignment| %>
+      <% if assignment.dish.present? %>
+        <% dish_food_groups = assignment.dish.dish_food_groups %>
+        <% if dish_food_groups.present? %>
+          <% dish_food_groups.each do |dfg| %>
+            <% fg_name = dfg.food_group.name %>
+            <% summary_by_day_and_group[[day, fg_name]] += dfg.number_of_instances.to_i %>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
   <% end %>
-<% end %>
 
 
 
-<% weekly_totals = Hash.new(0) %>
-<% summary_by_day_and_group.each do |(day, fg_name), count| %>
-  <% weekly_totals[fg_name] += count %>
-<% end %>
+  <% weekly_totals = Hash.new(0) %>
+  <% summary_by_day_and_group.each do |(day, fg_name), count| %>
+    <% weekly_totals[fg_name] += count %>
+  <% end %>
 
-<% recommended_per_week = {
-  "vegetables" => "14/week",
-  "legumes" => "2–4/week",
-  "fish" => "2–4/week",
-  "eggs" => "3–5/week",
-  "white meat" => "2–3/week",
-  "red meat" => "1/week",
-  "whole grains" => "7/week"
-} %>
-<h2 class="text-burgundy">Summary of Food Groups per Day</h2>
-<div class="table-responsive">
-  <table class="table table-bordered table-striped align-middle text-center">
-  <thead class="table-light">
-    <tr style="background-color: rgba(128, 0, 32, 0.86); color: white;">
-      <tr>
-        <th>Food Group</th>
-        <% (0..6).each do |offset| %>
-          <% day = start_of_week + offset %>
-          <th><%= day.strftime("%a %b %e") %></th>
-        <% end %>
-        <th>Total (week)</th>
-        <th>Recommended</th>
-      </tr>
-
-    <% @food_groups.each do |fg| %>
-      <tr>
-        <td>
-          <a href="/food_groups/<%= fg.id %>">
-                <%= fg.name.capitalize %>
-          </a>
-        </td>
-        <% (0..6).each do |offset| %>
-          <% day = start_of_week + offset %>
-          <td><%= summary_by_day_and_group[[day, fg.name]] %></td>
-        <% end %>
-        <%
-          total = weekly_totals[fg.name]
-          recommended_text = recommended_per_week[fg.name]
-
-          # Start with a default style
-          cell_style = "color: green; font-weight: bold;"
-
-          # Check if there is a recommendation
-          if recommended_text.present?
-            # Try to extract the first number
-            numbers = recommended_text.scan(/\d+/)
-            min_required = numbers.first.to_i if numbers.any?
-
-            # If the total is less than that number, change style to red
-            if total < min_required
-              cell_style = "color: red; font-weight: bold;"
-            end
-          end
-        %>
-        <td style="<%= cell_style %>"><%= total %></td>
-        <td>
-          <% if recommended_text.present? %>
-            <%= recommended_text %>
+  <% recommended_per_week = {
+    "vegetables" => "14/week",
+    "legumes" => "2–4/week",
+    "fish" => "2–4/week",
+    "eggs" => "3–5/week",
+    "white meat" => "2–3/week",
+    "red meat" => "1/week",
+    "whole grains" => "7/week"
+  } %>
+  <h2 class="text-burgundy mt-5">Summary of Food Groups per Day</h2>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle text-center" 
+       style="border-radius: 12px; border-collapse: separate; overflow: hidden;">
+      <thead>
+        <tr>
+          <th style="background-color: rgba(128, 0, 32, 0.86); color: white;">Food Group</th>
+          <% (0..6).each do |offset| %>
+            <% day = start_of_week + offset %>
+            <th style="background-color: rgba(128, 0, 32, 0.86); color: white;">
+              <%= day.strftime("%a %b %e") %>
+            </th>
           <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </table>
-</div>
+          <th style="background-color: rgba(128, 0, 32, 0.86); color: white;">Total (week)</th>
+          <th style="background-color: rgba(128, 0, 32, 0.86); color: white;">Recommended</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @food_groups.each do |fg| %>
+          <tr>
+            <td>
+              <a href="/food_groups/<%= fg.id %>">
+                    <%= fg.name.capitalize %>
+              </a>
+            </td>
+            <% (0..6).each do |offset| %>
+              <% day = start_of_week + offset %>
+              <td><%= summary_by_day_and_group[[day, fg.name]] %></td>
+            <% end %>
+            <%
+              total = weekly_totals[fg.name]
+              recommended_text = recommended_per_week[fg.name]
+
+              # Start with a default style
+              cell_style = "color: green; font-weight: bold;"
+
+              # Check if there is a recommendation
+              if recommended_text.present?
+                # Try to extract the first number
+                numbers = recommended_text.scan(/\d+/)
+                min_required = numbers.first.to_i if numbers.any?
+
+                # If the total is less than that number, change style to red
+                if total < min_required
+                  cell_style = "color: red; font-weight: bold;"
+                end
+              end
+            %>
+            <td style="<%= cell_style %>"><%= total %></td>
+            <td>
+              <% if recommended_text.present? %>
+                <%= recommended_text %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>  
