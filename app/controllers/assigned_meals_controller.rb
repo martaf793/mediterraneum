@@ -10,15 +10,17 @@ class AssignedMealsController < ApplicationController
 
   def show
     the_id = params.fetch("path_id")
+    @the_assigned_meal = AssignedMeal.where({ :id => the_id }).at(0)
 
-    matching_assigned_meals = AssignedMeal.where({ :id => the_id })
+    if @the_assigned_meal.user_id != current_user.id
+      redirect_to("/assigned_meals", alert: "Not authorized.") and return
+    end
 
-    @the_assigned_meal = matching_assigned_meals.at(0)
-    @the_assigned_meal.user_id = current_user.id
-
+    @my_dishes = Dish.where(creator_id: current_user.id).order(:name)
 
     render({ :template => "assigned_meals/show" })
   end
+
 
   def create
     the_assigned_meal = AssignedMeal.new

@@ -33,8 +33,15 @@
 
     <div class="col-md-6">
       <label for="dish_id_box" class="form-label">Dish</label>
-      <input type="text" id="dish_id_box" name="query_dish_id" class="form-control"
-             value="<%= @the_assigned_meal.dish.name.capitalize if @the_assigned_meal.dish.present? %>">
+      <select class="form-select" id="dish_id_box" name="query_dish_id">
+        <option value="">Choose a dish...</option>
+        <% @my_dishes.each do |dish| %>
+          <option value="<%= dish.id %>" <%= "selected" if dish.id == @the_assigned_meal.dish_id %>>
+            <%= dish.name.capitalize %>
+          </option>
+        <% end %>
+      </select>
+
     </div>
 
     <div class="col-md-4">
