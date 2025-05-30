@@ -30,19 +30,29 @@
   
   <body>
 
-      <nav>
-      <a href="/">MEDITERRANEUM</a>
-      <% if current_user != nil %>
-      <a href="/dishes">Dishes</a>
-      <a href="/assigned_meals">Assigned Meals</a>
-      <a href="/food_groups">Food Groups</a>
-      <a href="/users/sign_out">Sign out </a>
-      <a href="/users/edit">Edit profile </a>
-      <% else%>
-      <a href="/users/sign_up">Sign up</a>
-      <a href="/users/sign_in">Sign in</a>
-      <% end %>
+      <nav class="navbar navbar-expand-lg bg-light mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="/">MEDITERRANEUM</a>
+        <% if current_user != nil %>
+        <a href="/dishes">Dishes</a>
+        <a href="/assigned_meals">Assigned Meals</a>
+        <a href="/food_groups">Food Groups</a>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Profile
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/users/edit">Edit profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/users/sign_out">Sign out</a></li>
+          </ul>
+        </li>
 
+        <% else%>
+        <a href="/users/sign_up">Sign up</a>
+        <a href="/users/sign_in">Sign in</a>
+        <% end %>
+      </div>
     </nav>
     
   <% if notice.present? %>
