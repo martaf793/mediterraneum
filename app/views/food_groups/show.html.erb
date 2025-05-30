@@ -1,94 +1,37 @@
-<div>
-  <div>
-    <h1>
-      <%= @the_food_group.name.capitalize %> details
-    </h1>
+<div class="container mt-4">
+  <h1 class="mb-3"><%= @the_food_group.name.capitalize %> Details</h1>
 
-    <div>
-      <div>
-        <a href="/food_groups">
-          Go back
-        </a>
-      </div>
+  <div class="mb-4">
+    <a href="/food_groups" class="btn btn-secondary">Go back</a>
+  </div>
 
-<!--      <div>
-        <a href="/delete_food_group/<%#= @the_food_group.id %>">
-          Delete food group
-        </a>
-      </div>-->
-    </div>
+  <dl class="row">
+    <dt class="col-sm-2 fw-bold">Name</dt>
+    <dd class="col-sm-10"><%= @the_food_group.name.capitalize %></dd>
+  </dl>
 
-    <dl>
-      <dt>
-        Name
-      </dt>
-      <dd>
-        <%= @the_food_group.name.capitalize %>
-      </dd>
-    <hr>
+  <hr class="my-4">
 
-    <div>
-      <h2>Dishes with this food group</h2>
-      <% if @dish_food_groups.any? %>
-        <ul>
-          <% @dish_food_groups.each do |dfg| %>
-            <% if dfg.dish.present? %>
-              <li>
-                <a href="/dishes/<%= dfg.dish.id %>">
-                  <%= dfg.dish.name.capitalize %>
-                </a>
-                : <%= dfg.number_of_instances %>
-              </li>
-            <% end %>
+  <div class="mt-4">
+    <h2 class="mb-3">Dishes with this Food Group</h2>
+
+    <% if @dish_food_groups.any? %>
+      <ul class="list-group">
+        <% @dish_food_groups.each do |dfg| %>
+          <% if dfg.dish.present? %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <a href="/dishes/<%= dfg.dish.id %>" style="color: rgba(128, 0, 32, 0.86);">
+                <%= dfg.dish.name.capitalize %>
+              </a>
+              <span class="badge bg-secondary rounded-pill"><%= dfg.number_of_instances %></span>
+            </li>
           <% end %>
-        </ul>
-      <% else %>
-        <p>No dishes currently have <%= @the_food_group.name.capitalize %></p>
-      <% end %>
-    </div>
-
-
-      <!--<dt>
-        Created at
-      </dt>
-      <dd>
-        <%#= time_ago_in_words(@the_food_group.created_at) %> ago-->
-<!--      </dd>
-
-      <dt>
-        Updated at
-      </dt>
-      <dd>
-        <%#= time_ago_in_words(@the_food_group.updated_at) %> ago-->
-<!--      </dd>-->
-    </dl>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted">No dishes currently have <%= @the_food_group.name.capitalize %>.</p>
+    <% end %>
   </div>
+
+  <hr class="my-4">
 </div>
-
-<hr>
-
-
-<!--<div>
-  <div>
-    <h2>
-      Edit food group
-    </h2>
-
-    <form action="/modify_food_group/<%#= @the_food_group.id %>"  method="post" >
-      <div>
-        <label for="name_box">
-          Name
-        </label>
-
-        <input type="text" id="name_box" name="query_name" value="<%#= @the_food_group.name %>">
-      </div>
-
-      <button>
-        Update food group
-      </button>
-    </form>
-  </div>
-</div>
-
-<hr>
--->
