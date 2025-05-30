@@ -1,107 +1,81 @@
-<div>
-  <div>
-    <h1>
-      List of all assigned meals
-    </h1>
-  </div>
-</div>
+<div class="container mt-4">
+  <h1 class="mb-4">List of All Assigned Meals</h1>
 
-<hr>
+  <hr>
 
-<div>
-  <div>
-    <h2>
-      Add a new assigned meal
-    </h2>
+  <h2 class="mb-3">Add a New Assigned Meal</h2>
 
-    <form action="/insert_assigned_meal" method="post">
-      <div>
-        <label for="dish_id_box" class="control-label sr-only">
-          Dish
-        </label>
-        <select class="form-control" id="dish_id_box" name="query_dish_id">
-          <option value="">Choose a dish...</option>
-          <%# matching_dishes = Dish.order(updated_at: :desc) %>
-<!---->
-           <% matching_dishes = Dish.order(:name) %>
-          <% matching_dishes.each do |a_dish| %>
-            <option value="<%= a_dish.id %>"><%= a_dish.name %></option>
-          <% end %>
-        </select>
-      </div>
+  <form action="/insert_assigned_meal" method="post" class="row g-3">
+    <div class="col-md-6">
+      <label for="dish_id_box" class="form-label">Dish</label>
+      <select class="form-select" id="dish_id_box" name="query_dish_id">
+        <option value="">Choose a dish...</option>
+        <% matching_dishes = Dish.order(:name) %>
+        <% matching_dishes.each do |a_dish| %>
+          <option value="<%= a_dish.id %>"><%= a_dish.name.capitalize %></option>
+        <% end %>
+      </select>
+    </div>
 
-      <div>
-        <label for="assigned_to_box">
-          Assigned to
-        </label>
+    <div class="col-md-4">
+      <label for="assigned_to_box" class="form-label">Assigned To</label>
+      <input type="date" id="assigned_to_box" name="query_assigned_to" class="form-control">
+    </div>
 
-        <input type="date" id="assigned_to_box" name="query_assigned_to">
-      </div>
+    <input type="hidden" name="query_user_id" value="<%= current_user.id %>">
 
-      <div>
-
-        <input type="hidden" name="query_user_id" value="<%= current_user.id %>">
-      </div>
-
-      <button>
-        Create assigned meal
+    <div class="col-md-2 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100"
+              style="background-color: rgba(128, 0, 30, 0.86); border-color: rgba(212, 63, 58, 0);">
+        Create
       </button>
-    </form>
-  </div>
-</div>
+    </div>
+  </form>
 
-<hr>
-<div>
-  <div>
-    <table border="1">
-      <tr>
-<!--        <th>
-          ID
-        </th>-->
+  <hr class="my-4">
 
-        <th>
-          Dish
-        </th>
-
-        <th>
-          Assigned to
-        </th>
-
-        <th>
-          User
-        </th>
-
-        <th>
-          Created at
-        </th>
-
-        <th>
-          Updated at
-        </th>
-
-        <th>
-        </th>
-      </tr>
-
-      <% @list_of_assigned_meals.each do |an_assigned_meal| %>
-      <% if an_assigned_meal.dish.present? %> <!-- only show rows with a dish -->
-        <tr>
-          <td>
-            <a href="/dishes/<%= an_assigned_meal.dish.id %>">
-            <%= an_assigned_meal.dish.name %></a>
-            </td>
-          <td><%= an_assigned_meal.assigned_to.strftime("%a %b %e, %Y") %></td>
-          <td><%= an_assigned_meal.user.email %></td>
-          <td><%= time_ago_in_words(an_assigned_meal.created_at) %> ago</td>
-          <td><%= time_ago_in_words(an_assigned_meal.updated_at) %> ago</td>
-          <td>
-            <a href="/assigned_meals/<%= an_assigned_meal.id %>">Show details</a>
-          </td>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle text-center">
+      <thead class="table-light">
+        <tr style="background-color: rgba(128,0,32,0.86); color: white;">
+          <th>Dish</th>
+          <th>Assigned To</th>
+          <th>User</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>Action</th>
         </tr>
-      <% end %>
-    <% end %>
+      </thead>
+      <tbody>
+        <% @list_of_assigned_meals.each do |an_assigned_meal| %>
+          <% if an_assigned_meal.dish.present? %>
+            <tr>
+              <td>
+                <a href="/dishes/<%= an_assigned_meal.dish.id %>">
+                  <%= an_assigned_meal.dish.name.capitalize %>
+                </a>
+              </td>
+              <td><%= an_assigned_meal.assigned_to.strftime("%a %b %e, %Y") %></td>
+              <td><%= an_assigned_meal.user.email %></td>
+              <td><%= time_ago_in_words(an_assigned_meal.created_at) %> ago</td>
+              <td><%= time_ago_in_words(an_assigned_meal.updated_at) %> ago</td>
+              <td>
+                <a href="/assigned_meals/<%= an_assigned_meal.id %>"
+                   class="btn btn-outline-primary btn-sm"
+                   style="--bs-btn-color: rgba(128, 0, 32, 0.86); 
+                          --bs-btn-border-color: rgba(128, 0, 32, 0.86); 
+                          --bs-btn-hover-bg: rgba(128, 0, 32, 0.86); 
+                          --bs-btn-hover-border-color: rgba(128, 0, 32, 0.86); 
+                          --bs-btn-hover-color: white;">
+                  Show details
+                </a>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
     </table>
   </div>
-</div>
 
-<hr>
+  <hr>
+</div>
