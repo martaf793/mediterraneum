@@ -32,7 +32,16 @@
                 <tr>
                   <td><%= a_dish.name.capitalize %></td>
                   <td>
-                    <a class="btn btn-outline-primary btn-sm" href="/dishes/<%= a_dish.id %>">Show details</a>
+                    <a class="btn btn-outline-primary btn-sm" 
+                      href="/dishes/<%= a_dish.id %>" 
+                      style="--bs-btn-color: rgba(128, 0, 32, 0.86); 
+                              --bs-btn-border-color: rgba(128, 0, 32, 0.86); 
+                              --bs-btn-hover-bg: rgba(128, 0, 32, 0.86); 
+                              --bs-btn-hover-border-color: rgba(128, 0, 32, 0.86); 
+                              --bs-btn-hover-color: white;">
+                      Show details
+                    </a>
+
                   </td>
                 </tr>
               <% end %>
@@ -76,7 +85,10 @@
         </div>
       </div>
       <div class="mb-2">
-        <%= f.submit "Search", class: "btn btn-primary w-100" %>
+        <%= f.submit "Search", 
+             class: "btn btn-primary w-100", 
+             style: "background-color: rgba(128, 0, 30, 0.86); border-color: rgba(212, 63, 58, 0);" %>
+
       </div>
       <div>
         <a href="/dishes" class="btn btn-secondary w-100">Clear filters</a>
