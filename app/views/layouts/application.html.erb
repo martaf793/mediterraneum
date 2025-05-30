@@ -84,17 +84,24 @@
       </div>
     </nav>
     
-    <% if notice.present? %>
-      <div>
-        <%= notice %>
-      </div>
+    <% unless controller_name == "sessions" && action_name == "new" %>
+      <% flash.each do |key, message| %>
+        <div class="alert alert-<%= key == "alert" ? "danger" : "success" %>">
+          <%= message %>
+        </div>
+      <% end %>
     <% end %>
-
-    <% if alert.present? %>
-      <div>
-        <%= alert %>
-      </div>
-    <% end %>
+    <%# if notice.present? %>
+<!--      <div>-->
+        <%#= notice %>
+<!--      </div>-->
+    <%# end %>
+<!---->
+    <%# if alert.present? %>
+<!--      <div>-->
+        <%#= alert %>
+<!--      </div>-->
+    <%# end %>
       <%= yield %>
   </body>
 </html>
