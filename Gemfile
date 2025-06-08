@@ -88,6 +88,7 @@ gem "table_print"
 gem "simple_form"
 gem "carrierwave"
 gem "openai-chat"
+gem "rails_db"
 
 group :development do
   gem "annotate"
