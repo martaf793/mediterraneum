@@ -4,7 +4,6 @@
 
       <div class="card shadow border-0">
         <div class="card-header text-center bg-white border-0">
-
           <%= image_tag("logo.png",
               alt: "Logo",
               height: "90",
@@ -30,22 +29,18 @@
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
           <div class="row justify-content-center mb-3">
             <div class="col-sm-10">
-              <div class="form-group row">
-                <%= f.label :email, class: "col-sm-3 col-form-label text-end" %>
-                <div class="col-sm-9">
-                  <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
-                </div>
+              <div class="form-group mb-3">
+                <%= f.label :email, class: "form-label text-start" %>
+                <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
               </div>
             </div>
           </div>
 
           <div class="row justify-content-center mb-3">
             <div class="col-sm-10">
-              <div class="form-group row">
-                <%= f.label :password, class: "col-sm-3 col-form-label text-end" %>
-                <div class="col-sm-9">
-                  <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
-                </div>
+              <div class="form-group mb-3">
+                <%= f.label :password, class: "form-label text-start" %>
+                <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
               </div>
             </div>
           </div>
