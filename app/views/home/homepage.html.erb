@@ -1,19 +1,18 @@
 <% start_of_week = @start_date %>
 <% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
 
-<div class="container mt-4">
+<div class="container-fluid px-2 px-sm-4 px-md-5 mt-4">
   <h1 class="mb-1">Weekly Meal Plan </h1>
   <p class="mt-0"> <%= current_user.email%> </p>
 
   <div class="container-fluid px-3">
-    <div class="row" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+    <div class="row g-2 g-lg-3 justify-content-center">
       <% (0..6).each do |offset| %>
         <% day = start_of_week + offset %>
         <% todays = assignments_by_date.fetch(day, []).sort_by(&:created_at) %>
 
-        <div class="col" style="min-width: 14.28%; max-width: 14.28%; flex: 0 0 14.28%;">
-          <div class="card h-100 shadow-sm" style="border: 2px solid rgba(128, 0, 32, 0.86);">
-
+        <div class="col-4 col-xl d-flex">
+          <div class="card flex-fill shadow-sm" style="border: 2px solid rgba(128, 0, 32, 0.86);">
             <div class="card-body p-2">
               <h6 class="card-title text-center fw-bold mb-2" style="font-size: 0.9rem;">
                 <%= day.strftime("%A") %><br><%= day.strftime("%b %e") %>
@@ -41,6 +40,8 @@
         </div>
       <% end %>
     </div>
+
+
     <div class="d-flex justify-content-between mt-4">
       <%= link_to "← Previous Week", home_path(start_date: (@start_date - 7).strftime('%Y-%m-%d')), class: "btn btn-outline-primary" %>
       <%= link_to "Next Week →", home_path(start_date: (@start_date + 7).strftime('%Y-%m-%d')), class: "btn btn-outline-primary" %>
