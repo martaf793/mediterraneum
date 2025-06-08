@@ -4,6 +4,7 @@ services:
     runtime: ruby # this app is written in ruby
     plan: free # make sure to set this to free or you'll get billed $$$
     buildCommand: "./bin/render-build.sh" # we already created these two files for you
+    buildCommand: "bundle exec rake assets:precompile && ./bin/render-build.sh"
     startCommand: "./bin/render-start.sh"
     envVars: # this section sets some ENV variables needed by Render for deployment
       - key: SECRET_KEY_BASE
