@@ -96,7 +96,6 @@ group :development do
   gem "dev_toolbar"
   gem "draft_generators"
   gem "pry-rails"
-  gem "rails_db"
   gem "rails-erd"
   gem "rufo"
   gem "specs_to_readme"
