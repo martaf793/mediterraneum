@@ -1,5 +1,4 @@
-<% today = Date.today %>
-<% start_of_week = today - ((today.wday + 6) % 7) %>
+<% start_of_week = @start_date %>
 <% assignments_by_date = @list_of_assigned_meals.group_by { |am| am.assigned_to } %>
 
 <div class="container mt-4">
@@ -42,6 +41,11 @@
         </div>
       <% end %>
     </div>
+    <div class="d-flex justify-content-between mt-4">
+      <%= link_to "← Previous Week", home_path(start_date: (@start_date - 7).strftime('%Y-%m-%d')), class: "btn btn-outline-primary" %>
+      <%= link_to "Next Week →", home_path(start_date: (@start_date + 7).strftime('%Y-%m-%d')), class: "btn btn-outline-primary" %>
+    </div>
+
   </div>
 
 

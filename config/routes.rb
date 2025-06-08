@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   # get("/",{ :controller => "dishes", :action => "index" })
-  root to: "home#index"
+  root to: "home#index", as: "home"
 
   # Routes for the Assigned meal resource:
 
